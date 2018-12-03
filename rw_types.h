@@ -74,18 +74,24 @@ typedef struct Transform {
 } Transform;
 
 typedef union Rect2 {
-  float min_px, min_py, max_px, max_py;
   struct {
     Vec2 min_p;
     Vec2 max_p;
   };
+  struct {
+    float min_px, min_py;
+    float max_px, max_py;
+  };
 } Rect2;
 
 typedef union Rect3 {
-  float min_px, min_py, min_pz, max_px, max_py, max_pz;
   struct {
     Vec3 min_p;
     Vec3 max_p;
+  };
+  struct {
+    float min_px, min_py, min_pz;
+    float max_px, max_py, max_pz;
   };
 } Rect3;
 

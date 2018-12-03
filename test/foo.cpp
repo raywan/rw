@@ -3,5 +3,5 @@
 
 
 void f() {
-  vec2 v = v2_zero();
+  Vec2 v = v2_zero();
 }

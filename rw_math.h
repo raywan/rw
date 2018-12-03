@@ -107,7 +107,8 @@ RWM_DEF bool r2_pt_inside_excl(Rect2 r, Vec2 p);
 RWM_DEF Rect2 r2_expand(Rect2 r, float delta);
 RWM_DEF Vec2 r2_diagonal(Rect2 r);
 RWM_DEF float r2_surface_area(Rect2 r);
-RWM_DEF int r2_max_extent(Rect2 r);
+RWM_DEF int r2_max_extent(Rect2 r); // Returns index of the longest axis
+RWM_DEF Vec2 r2_offset(Rect2 r, Vec2 p); // Returns p relative to the box
 
 // __RECT3
 RWM_DEF Rect3 r3_init_limit();
@@ -121,7 +122,8 @@ RWM_DEF Rect3 r3_expand(Rect3 r, float delta);
 RWM_DEF Vec3 r3_diagonal(Rect3 r);
 RWM_DEF float r3_surface_area(Rect3 r);
 RWM_DEF float r3_volume(Rect3 r);
-RWM_DEF int r3_max_extent(Rect3 r);
+RWM_DEF int r3_max_extent(Rect3 r); // Returns index of the longest axis
+RWM_DEF Vec3 r3_offset(Rect3 r, Vec3 p); // Returns p relative to the box
 
 #ifdef __cplusplus
 }
@@ -166,6 +168,20 @@ RWM_DEF Vec3 &operator*=(Vec3 &v, float a);
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 #endif
 
+#if !defined(MIN)
+#define MIN(a,b) \
+  ({ __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+    _a > _b ? _b : _a; })
+#endif
+
+#if !defined(MAX)
+#define MAX(a,b) \
+  ({ __typeof__ (a) _a = (a); \
+    __typeof__ (b) _b = (b); \
+_a > _b ? _a : _b; })
+#endif
+
 ///////////////////////////////////////////////////////////////////////////////
 // __IMPLEMENTATIONS
 ///////////////////////////////////////////////////////////////////////////////
@@ -173,6 +189,7 @@ RWM_DEF Vec3 &operator*=(Vec3 &v, float a);
 
 #include <math.h>
 #include <stdio.h> // printf
+#include <float.h> // FLT_MAX, FLT_MIN
 
 ///////////////////////////////////////////////////////////////////////////////
 // __UTILITY
@@ -764,18 +781,97 @@ RWM_DEF Quaternion q_normalize(Quaternion q) {
 // __RECT3
 ///////////////////////////////////////////////////////////////////////////////
 
-//RWM_DEF Rect3 r3_init_limit();
-//RWM_DEF Rect3 r3_init(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z);
-//RWM_DEF Rect3 r3_init_v3(Vec3 min_p, Vec3 max_p);
-//RWM_DEF Rect3 r3_intersection(Rect3 a, Rect3 b);
-//RWM_DEF bool r3_overlaps(Rect3 a, Rect3 b);
-//RWM_DEF bool r3_pt_inside(Rect3 r, Vec3 p);
-//RWM_DEF bool r3_pt_inside_excl(Rect3 r, Vec3 p);
-//RWM_DEF Rect3 r3_expand(Rect3 r, float delta);
-//RWM_DEF Vec3 r3_diagonal(Rect3 r);
-//RWM_DEF float r3_surface_area(Rect3 r);
-//RWM_DEF float r3_volume(Rect3 r);
-//RWM_DEF int r3_max_extent(Rect3 r);
+RWM_DEF Rect3 r3_init_limit() {
+  Rect3 result = {
+    -FLT_MAX, -FLT_MAX, -FLT_MAX,
+    FLT_MAX, FLT_MAX, FLT_MAX
+  };
+  return result;
+}
+
+RWM_DEF Rect3 r3_init(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z) {
+  Rect3 result = {
+    min_x, min_y, min_z,
+    max_x, max_y, max_z
+  };
+  return result;
+}
+
+RWM_DEF Rect3 r3_init_v3(Vec3 min_p, Vec3 max_p) {
+  Rect3 result = { min_p, max_p }; return result;
+}
+
+RWM_DEF Rect3 r3_intersection(Rect3 a, Rect3 b) {
+  Rect3 result = { 0.0f };
+  result.min_px = MAX(a.min_px, b.min_px);
+  result.min_py = MAX(a.min_py, b.min_py);
+  result.min_pz = MAX(a.min_pz, b.min_pz);
+  result.max_px = MIN(a.max_px, b.max_px);
+  result.max_py = MIN(a.max_py, b.max_py);
+  result.max_pz = MIN(a.max_pz, b.max_pz);
+  return result;
+}
+
+RWM_DEF bool r3_overlaps(Rect3 a, Rect3 b) {
+  int x = (a.max_px >= b.min_px) && (a.min_px <= b.max_px);
+	int y = (a.max_py >= b.min_py) && (a.min_py <= b.max_py);
+	int z = (a.max_pz >= b.min_pz) && (a.min_pz <= b.max_pz);
+  return x && y && z;
+}
+
+RWM_DEF bool r3_pt_inside(Rect3 r, Vec3 p) {
+  int x = p.x >= r.min_px && p.x <= r.max_px;
+  int y = p.y >= r.min_py && p.y <= r.max_py;
+  int z = p.z >= r.min_pz && p.z <= r.max_pz;
+  return x && y && z;
+}
+
+RWM_DEF bool r3_pt_inside_excl(Rect3 r, Vec3 p) {
+  int x = p.x > r.min_px && p.x < r.max_px;
+  int y = p.y > r.min_py && p.y < r.max_py;
+  int z = p.z > r.min_pz && p.z < r.max_pz;
+  return x && y && z;
+}
+
+RWM_DEF Rect3 r3_expand(Rect3 r, float delta) {
+  Rect3 result = {};
+  Vec3 d = v3_init(delta, delta, delta);
+  result.min_p = v3_subtract(r.min_p, d);
+  result.max_p = v3_add(r.max_p, d);
+  return result;
+}
+
+RWM_DEF Vec3 r3_diagonal(Rect3 r) {
+  Vec3 result = v3_subtract(r.max_p, r.min_p);
+  return result;
+}
+
+RWM_DEF float r3_surface_area(Rect3 r) {
+  Vec3 diag = r3_diagonal(r);
+  float result = 2.0f * (diag.x*diag.y + diag.x*diag.z + diag.y*diag.z);
+  return result;
+}
+
+RWM_DEF float r3_volume(Rect3 r) {
+  Vec3 diag = r3_diagonal(r);
+  float result = diag.x * diag.y * diag.z;
+  return result;
+}
+
+RWM_DEF int r3_max_extent(Rect3 r) {
+  Vec3 diag = r3_diagonal(r);
+  if (diag.x > diag.y && diag.x > diag.z) return 0;
+  else if (diag.y > diag.z) return 1;
+  return 2;
+}
+
+RWM_DEF Vec3 r3_offset(Rect3 r, Vec3 p) {
+ Vec3 result = v3_subtract(p, r.min_p);
+ if (r.max_px > r.min_px) result.x /= r.max_px - r.min_px;
+ if (r.max_py > r.min_py) result.y /= r.max_py - r.min_py;
+ if (r.max_pz > r.min_pz) result.z /= r.max_pz - r.min_pz;
+ return result;
+}
 
 #endif // ifdef RWM_IMPLEMENTATION
 
