@@ -23,26 +23,26 @@ typedef uintptr_t uintptr;
 // __DEF
 ///////////////////////////////////////////////////////////////////////////////
 
-typedef union vec2 {
+typedef union Vec2 {
   struct { float x, y; };
   struct { float u, v; };
   float e[2];
-} vec2;
+} Vec2;
 
-typedef union vec3 {
+typedef union Vec3 {
   struct { float x, y, z; };
   struct { float r, g, b; };
   struct { float u, v, w; };
   float e[3];
-} vec3;
+} Vec3;
 
-typedef union vec4 {
+typedef union Vec4 {
   struct { float x, y, z, w; };
   struct { float r, g, b, a; };
   float e[4];
-} vec4;
+} Vec4;
 
-typedef union mat3 {
+typedef union Mat3 {
   // NOTE(ray): row major
   struct {
     float e00, e01, e02;
@@ -50,9 +50,9 @@ typedef union mat3 {
     float e20, e21, e22;
   };
   float e[3][3];
-} mat3;
+} Mat3;
 
-typedef union mat4 {
+typedef union Mat4 {
   struct {
     float e00, e01, e02, e03;
     float e10, e11, e12, e13;
@@ -60,7 +60,7 @@ typedef union mat4 {
     float e30, e31, e32, e33;
   };
   float e[4][4];
-} mat4;
+} Mat4;
 
 typedef union Quaternion {
   // xi + yj + zk + w
@@ -69,23 +69,23 @@ typedef union Quaternion {
 } Quaternion;
 
 typedef struct Transform {
-  mat4 m;
-  mat4 m_inv;
+  Mat4 m;
+  Mat4 m_inv;
 } Transform;
 
 typedef union Rect2 {
   float min_px, min_py, max_px, max_py;
   struct {
-    vec2 min_p;
-    vec2 max_p;
+    Vec2 min_p;
+    Vec2 max_p;
   };
 } Rect2;
 
 typedef union Rect3 {
   float min_px, min_py, min_pz, max_px, max_py, max_pz;
   struct {
-    vec3 min_p;
-    vec3 max_p;
+    Vec3 min_p;
+    Vec3 max_p;
   };
 } Rect3;
 
