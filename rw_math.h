@@ -1,0 +1,729 @@
+#ifndef __RW_MATH_H__
+#define __RW_MATH_H__
+
+// UNCOMMENT (OR DEFINE) THIS LINE IF YOU WANT THIS LIBRARY TO BE HEADER ONLY
+//#define RWM_HEADER_ONLY
+
+// Detect compiler type (for intrinsics)
+#if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
+#include <x86intrin.h>
+#define RWM_USE_INTRINSICS
+#elif defined(__MSC_VER)
+#include <intrin.h>
+#define RWM_USE_INTRINSICS
+#endif
+
+#if defined(RWM_STATIC)
+  #define RWM_DEF static
+#elif defined(RWM_HEADER_ONLY)
+  #define RWM_DEF static inline
+#else
+  #define RWM_DEF extern
+#endif
+
+// TODO(ray): Once the definitions have been added back in, uncomment this
+//#ifndef RWM_STANDALONE
+#include "rw_types.h"
+//#endif
+
+#if defined(RWM_STANDALONE) || !defined(__RW_TYPES_H__)
+// TODO(ray): Paste the definitions of types here from rw_types.h
+#endif // #if defined(RWM_STANDALONE) && !defined(__RW_TYPES_H__)
+
+///////////////////////////////////////////////////////////////////////////////
+// __API
+///////////////////////////////////////////////////////////////////////////////
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// __UTILITY
+RWM_DEF float lerp(float a, float t, float b);
+RWM_DEF float clamp(float lower, float val, float upper);
+RWM_DEF float clamp01(float val);
+RWM_DEF float to_radians(float degrees);
+RWM_DEF float to_degrees(float radians);
+
+// __VEC2
+RWM_DEF void v2_puts(vec2 *v);
+RWM_DEF void v2_printf(const char *label, vec2 *v);
+RWM_DEF vec2 v2_init(float x, float y);
+RWM_DEF vec2 v2_zero();
+RWM_DEF vec2 v2_add(vec2 a, vec2 b);
+RWM_DEF vec2 v2_subtract(vec2 a, vec2 b);
+RWM_DEF vec2 v2_scalar_mult(float a, vec2 v);
+RWM_DEF vec2 v2_scalar_div(vec2 v, float a);
+RWM_DEF float v2_length_squared(vec2 v);
+RWM_DEF float v2_length(vec2 v);
+RWM_DEF vec2 v2_normalize(vec2 v);
+RWM_DEF float v2_inner(vec2 a, vec2 b);
+RWM_DEF vec2 v2_lerp(vec2 a, float t, vec2 b);
+
+// __VEC3
+RWM_DEF void v3_puts(vec3 *v);
+RWM_DEF void v3_printf(const char *label, vec3 *v);
+RWM_DEF vec3 v3_init(float x, float y, float z);
+RWM_DEF vec3 v3_zero();
+RWM_DEF vec3 v3_add(vec3 a, vec3 b);
+RWM_DEF vec3 v3_subtract(vec3 a, vec3 b);
+RWM_DEF vec3 v3_scalar_mult(float a, vec3 v);
+RWM_DEF vec3 v3_scalar_div(vec3 v, float a);
+RWM_DEF float v3_length_squared(vec3 v);
+RWM_DEF float v3_length(vec3 v);
+RWM_DEF vec3 v3_normalize(vec3 v);
+RWM_DEF float v3_inner(vec3 a, vec3 b);
+RWM_DEF vec3 v3_cross(vec3 a, vec3 b);
+RWM_DEF vec3 v3_lerp(vec3 a, float t, vec3 b);
+
+// __MAT4
+RWM_DEF void m4_puts(mat4 *m);
+RWM_DEF mat4 m4_diagonal(float a);
+RWM_DEF mat4 m4_identity();
+RWM_DEF float m4_trace(mat4 m);
+RWM_DEF mat4 m4_add(mat4 a, mat4 b);
+RWM_DEF mat4 m4_subtract(mat4 a, mat4 b);
+RWM_DEF mat4 m4_scalar_mult(float a, mat4 m);
+RWM_DEF mat4 m4_multiply(mat4 a, mat4 b);
+RWM_DEF mat4 m4_inverse(mat4 m);
+
+// __QUATERNION
+RWM_DEF Quaternion q_init(float x, float y, float z, float w);
+RWM_DEF Quaternion q_identity();
+RWM_DEF Quaternion q_init_v4(vec4 v);
+RWM_DEF float q_length(Quaternion q);
+
+// __UTILITY
+#if defined(RWM_USE_INTRINSICS)
+RWM_DEF float rw_sqrt(float val);
+#endif
+
+#ifdef __cplusplus
+}
+#endif
+
+#ifdef __cplusplus
+RWM_DEF vec2 operator+(vec2 a, vec2 b);
+RWM_DEF vec2 &operator+=(vec2 &a, vec2 b);
+RWM_DEF vec2 operator-(vec2 a);
+RWM_DEF vec2 operator-(vec2 a, vec2 b);
+RWM_DEF vec2 &operator-=(vec2 &a, vec2 b);
+RWM_DEF vec2 operator*(float a, vec2 v);
+RWM_DEF vec2 operator*(vec2 v, float a);
+RWM_DEF vec2 &operator*=(vec2 &v, float a);
+
+RWM_DEF vec3 operator+(vec3 a, vec3 b);
+RWM_DEF vec3 &operator+=(vec3 &a, vec3 b);
+RWM_DEF vec3 operator-(vec3 a);
+RWM_DEF vec3 operator-(vec3 a, vec3 b);
+RWM_DEF vec3 &operator-=(vec3 &a, vec3 b);
+RWM_DEF vec3 operator*(float a, vec3 v);
+RWM_DEF vec3 operator*(vec3 v, float a);
+RWM_DEF vec3 &operator*=(vec3 &v, float a);
+#endif
+
+
+///////////////////////////////////////////////////////////////////////////////
+// __MACROS
+///////////////////////////////////////////////////////////////////////////////
+
+#if !defined(PI)
+#define PI 3.14159265359f
+#endif
+
+#if !defined(SQUARE)
+#define SQUARE(x) ((x) * (x))
+#endif
+
+#if !defined(ABS)
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
+#endif
+
+///////////////////////////////////////////////////////////////////////////////
+// __IMPLEMENTATIONS
+///////////////////////////////////////////////////////////////////////////////
+#if defined(RWM_IMPLEMENTATION) || defined(RWM_HEADER_ONLY)
+
+#include <math.h>
+#include <stdio.h> // printf
+
+///////////////////////////////////////////////////////////////////////////////
+// __UTILITY
+///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF float lerp(float a, float t, float b) {
+  float result = ((1.0f - t) * a) + (t * b);
+  return result;
+}
+
+RWM_DEF float clamp(float lower, float val, float upper) {
+  if (val < lower) return lower;
+  else if (val > upper) return upper;
+  return val;
+}
+
+RWM_DEF float clamp01(float val) {
+  float result = clamp(0.0f, val, 1.0f);
+  return result;
+}
+
+RWM_DEF float to_radians(float degrees) {
+  float result = degrees * (PI/180.0f);
+  return result;
+}
+
+RWM_DEF float to_degrees(float radians) {
+  float result = radians * (180.0f/PI);
+  return result;
+}
+
+#if defined(RWM_USE_INTRINSICS)
+RWM_DEF float rw_sqrt(float val) {
+  // _mm_set_ss : copy a 32 bit float to the lower element, zero the upper three
+  // _mm_sqrt_ss : computes sqrt of lower 32 bit float
+  // __mm_cvtss_f32 : copies lower 32 bit float to destination type (float)
+  float result = _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(val)));
+  return result;
+}
+#endif
+
+
+///////////////////////////////////////////////////////////////////////////////
+// __VEC2
+///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF void v2_puts(vec2 *v) {
+  printf("[%f, %f]\n", v->x, v->y);
+}
+
+RWM_DEF void v2_printf(const char *label, vec2 *v) {
+  printf("%s: [%f, %f]\n", label, v->e[0], v->e[1]);
+}
+
+RWM_DEF vec2 v2_init(float x, float y) {
+  vec2 result = { x, y };
+  return result;
+}
+
+RWM_DEF vec2 v2_zero() {
+  vec2 result = { 0.0f, 0.0f };
+  return result;
+}
+
+RWM_DEF vec2 v2_add(vec2 a, vec2 b) {
+  vec2 result = {
+    a.x + b.x,
+    a.y + b.y
+  };
+  return result;
+}
+
+RWM_DEF vec2 v2_subtract(vec2 a, vec2 b) {
+  vec2 result = {
+    a.x - b.x,
+    a.y - b.y
+  };
+  return result;
+}
+
+RWM_DEF vec2 v2_scalar_mult(float a, vec2 v) {
+  vec2 result = { a * v.x, a * v.y };
+  return result;
+}
+
+RWM_DEF vec2 v2_scalar_div(vec2 v, float a) {
+  // TODO(ray): Assert we're not dividing by 0
+  vec2 result = { v.x/a, v.y/a };
+  return result;
+}
+
+RWM_DEF float v2_length_squared(vec2 v) {
+  return SQUARE(v.x) + SQUARE(v.y);
+}
+
+RWM_DEF float v2_length(vec2 v) {
+  return rw_sqrt(SQUARE(v.x) + SQUARE(v.y));
+}
+
+RWM_DEF vec2 v2_normalize(vec2 v) {
+  float norm = v2_length(v);
+  vec2 result = {
+    v.x / norm,
+    v.y / norm
+  };
+  return result;
+}
+
+RWM_DEF float v2_inner(vec2 a, vec2 b) {
+  return (a.x * b.x) +
+         (a.y * b.y);
+}
+
+RWM_DEF vec2 v2_lerp(vec2 a, float t, vec2 b) {
+  vec2 result;
+  result.x = lerp(a.x, t, b.x);
+  result.y = lerp(a.y, t, b.y);
+  return result;
+}
+
+#ifdef __cplusplus
+RWM_DEF vec2 operator+(vec2 a, vec2 b) {
+  vec2 result;
+  result.x = a.x + b.x;
+  result.y = a.y + b.y;
+  return result;
+}
+
+RWM_DEF vec2 &operator+=(vec2 &a, vec2 b) {
+  a.x += b.x;
+  a.y += b.y;
+  return a;
+}
+
+RWM_DEF vec2 operator-(vec2 a) {
+  vec2 result;
+  result.x = -a.x;
+  result.y = -a.y;
+  return result;
+}
+
+RWM_DEF vec2 operator-(vec2 a, vec2 b) {
+  vec2 result;
+  result.x = a.x - b.x;
+  result.y = a.y - b.y;
+  return result;
+}
+
+RWM_DEF vec2 &operator-=(vec2 &a, vec2 b) {
+  a.x -= b.x;
+  a.y -= b.y;
+  return a;
+}
+
+RWM_DEF vec2 operator*(float a, vec2 v) {
+  vec2 result;
+  result.x = a * v.x;
+  result.y = a * v.y;
+  return result;
+}
+
+RWM_DEF vec2 operator*(vec2 v, float a) {
+  vec2 result;
+  result.x = a * v.x;
+  result.y = a * v.y;
+  return result;
+}
+
+RWM_DEF vec2 &operator*=(vec2 &v, float a) {
+  v.x *= a;
+  v.y *= a;
+  return v;
+}
+
+#endif // #ifndef __cplusplus for vec2
+
+///////////////////////////////////////////////////////////////////////////////
+// __VEC3
+///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF void v3_puts(vec3 *v) {
+  printf("[%f, %f, %f]\n", v->x, v->y, v->z);
+}
+
+RWM_DEF void v3_printf(const char *label, vec3 *v) {
+  printf("%s: [%f, %f, %f]\n", label, v->e[0], v->e[1], v->e[2]);
+}
+
+RWM_DEF vec3 v3_init(float x, float y, float z) {
+  vec3 result = { x, y, z };
+  return result;
+}
+
+RWM_DEF vec3 v3_zero() {
+  vec3 result = { 0.0f, 0.0f, 0.0f };
+  return result;
+}
+
+RWM_DEF vec3 v3_add(vec3 a, vec3 b) {
+  vec3 result = {
+    a.x + b.x,
+    a.y + b.y,
+    a.z + b.z
+  };
+  return result;
+}
+
+RWM_DEF vec3 v3_subtract(vec3 a, vec3 b) {
+  vec3 result = {
+    a.x - b.x,
+    a.y - b.y,
+    a.z - b.z
+  };
+  return result;
+}
+
+RWM_DEF vec3 v3_scalar_mult(float a, vec3 v) {
+  vec3 result = {
+    a * v.x,
+    a * v.y,
+    a * v.z
+  };
+  return result;
+}
+
+RWM_DEF vec3 v3_scalar_div(vec3 v, float a) {
+  // TODO(ray): Assert we're not dividing by 0
+  vec3 result = {
+    v.x/a,
+    v.y/a,
+    v.z/a
+  };
+  return result;
+}
+
+RWM_DEF float v3_length_squared(vec3 v) {
+  return SQUARE(v.x) + SQUARE(v.y) + SQUARE(v.z);
+}
+
+RWM_DEF float v3_length(vec3 v) {
+  return rw_sqrt(SQUARE(v.x) + SQUARE(v.y) + SQUARE(v.z));
+}
+
+RWM_DEF vec3 v3_normalize(vec3 v) {
+  float norm = v3_length(v);
+  vec3 result = {
+    v.x / norm,
+    v.y / norm,
+    v.z / norm
+  };
+  return result;
+}
+
+RWM_DEF float v3_inner(vec3 a, vec3 b) {
+  return (a.x * b.x) +
+         (a.y * b.y) +
+         (a.z * b.z);
+}
+
+RWM_DEF vec3 v3_cross(vec3 a, vec3 b) {
+  vec3 result;
+  result.x = (a.y * b.z) - (a.z * b.y);
+  result.y = (a.z * b.x) - (a.x * b.z);
+  result.z = (a.x * b.y) - (a.y * b.x);
+  return result;
+}
+
+RWM_DEF vec3 v3_lerp(vec3 a, float t, vec3 b) {
+  vec3 result;
+  result.x = lerp(a.x, t, b.x);
+  result.y = lerp(a.y, t, b.y);
+  result.z = lerp(a.z, t, b.z);
+  return result;
+}
+
+#ifdef __cplusplus
+RWM_DEF vec3 operator+(vec3 a, vec3 b) {
+  vec3 result;
+  result.x = a.x + b.x;
+  result.y = a.y + b.y;
+  result.z = a.z + b.z;
+  return result;
+}
+
+RWM_DEF vec3 &operator+=(vec3 &a, vec3 b) {
+  a.x += b.x;
+  a.y += b.y;
+  a.z += b.z;
+  return a;
+}
+
+RWM_DEF vec3 operator-(vec3 a) {
+  vec3 result;
+  result.x = -a.x;
+  result.y = -a.y;
+  result.z = -a.z;
+  return result;
+}
+
+RWM_DEF vec3 operator-(vec3 a, vec3 b) {
+  vec3 result;
+  result.x = a.x - b.x;
+  result.y = a.y - b.y;
+  result.z = a.z - b.z;
+  return result;
+}
+
+RWM_DEF vec3 &operator-=(vec3 &a, vec3 b) {
+  a.x -= b.x;
+  a.y -= b.y;
+  a.z -= b.z;
+  return a;
+}
+
+RWM_DEF vec3 operator*(float a, vec3 v) {
+  vec3 result;
+  result.x = a * v.x;
+  result.y = a * v.y;
+  result.z = a * v.z;
+  return result;
+}
+
+RWM_DEF vec3 operator*(vec3 v, float a) {
+  vec3 result;
+  result.x = a * v.x;
+  result.y = a * v.y;
+  result.z = a * v.z;
+  return result;
+}
+
+RWM_DEF vec3 &operator*=(vec3 &v, float a) {
+  v.x *= a;
+  v.y *= a;
+  v.z *= a;
+  return v;
+}
+
+#endif // #ifdef __cplusplus for vec3
+
+///////////////////////////////////////////////////////////////////////////////
+// __MAT4
+///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF void m4_puts(mat4 *m) {
+  for (int i = 0; i < 4; ++i) {
+    for (int j = 0; j < 4; ++j) {
+      printf("%f, ", m->e[i][j]);
+    }
+    puts("");
+  }
+  puts("");
+}
+
+RWM_DEF mat4 m4_diagonal(float a) {
+  mat4 result = { 0.0f };
+  result.e[0][0] = a;
+  result.e[1][1] = a;
+  result.e[2][2] = a;
+  result.e[3][3] = a;
+  return result;
+}
+
+RWM_DEF mat4 m4_identity() {
+  mat4 result = m4_diagonal(1.0f);
+  return result;
+}
+
+RWM_DEF float m4_trace(mat4 m) {
+  float result = m.e[0][0] + m.e[1][1] + m.e[2][2] + m.e[3][3];
+  return result;
+}
+
+RWM_DEF mat4 m4_add(mat4 a, mat4 b) {
+  mat4 result = { 0.0f };
+  result.e00 = a.e00 + b.e00;
+  result.e01 = a.e01 + b.e01;
+  result.e02 = a.e02 + b.e02;
+  result.e03 = a.e03 + b.e03;
+  result.e10 = a.e10 + b.e10;
+  result.e11 = a.e11 + b.e11;
+  result.e12 = a.e12 + b.e12;
+  result.e13 = a.e13 + b.e13;
+  result.e20 = a.e20 + b.e20;
+  result.e21 = a.e21 + b.e21;
+  result.e22 = a.e22 + b.e22;
+  result.e23 = a.e23 + b.e23;
+  result.e30 = a.e30 + b.e30;
+  result.e31 = a.e31 + b.e31;
+  result.e32 = a.e32 + b.e32;
+  result.e33 = a.e33 + b.e33;
+
+  return result;
+}
+
+RWM_DEF mat4 m4_subtract(mat4 a, mat4 b) {
+  mat4 result = { 0.0f };
+  result.e00 = a.e00 - b.e00;
+  result.e01 = a.e01 - b.e01;
+  result.e02 = a.e02 - b.e02;
+  result.e03 = a.e03 - b.e03;
+  result.e10 = a.e10 - b.e10;
+  result.e11 = a.e11 - b.e11;
+  result.e12 = a.e12 - b.e12;
+  result.e13 = a.e13 - b.e13;
+  result.e20 = a.e20 - b.e20;
+  result.e21 = a.e21 - b.e21;
+  result.e22 = a.e22 - b.e22;
+  result.e23 = a.e23 - b.e23;
+  result.e30 = a.e30 - b.e30;
+  result.e31 = a.e31 - b.e31;
+  result.e32 = a.e32 - b.e32;
+  result.e33 = a.e33 - b.e33;
+
+  return result;
+}
+
+RWM_DEF mat4 m4_scalar_mult(float a, mat4 m) {
+  mat4 result = { 0.0f };
+  result.e00 = a * m.e00;
+  result.e01 = a * m.e01;
+  result.e02 = a * m.e02;
+  result.e03 = a * m.e03;
+  result.e10 = a * m.e10;
+  result.e11 = a * m.e11;
+  result.e12 = a * m.e12;
+  result.e13 = a * m.e13;
+  result.e20 = a * m.e20;
+  result.e21 = a * m.e21;
+  result.e22 = a * m.e22;
+  result.e23 = a * m.e23;
+  result.e30 = a * m.e30;
+  result.e31 = a * m.e31;
+  result.e32 = a * m.e32;
+  result.e33 = a * m.e33;
+  return result;
+}
+
+RWM_DEF mat4 m4_multiply(mat4 a, mat4 b) {
+  mat4 result = { 0.0f };
+
+  result.e00 = (a.e00 * b.e00) + (a.e01 * b.e10) + (a.e02 * b.e20) + (a.e03 * b.e30);
+  result.e01 = (a.e00 * b.e01) + (a.e01 * b.e11) + (a.e02 * b.e21) + (a.e03 * b.e31);
+  result.e02 = (a.e00 * b.e02) + (a.e01 * b.e12) + (a.e02 * b.e22) + (a.e03 * b.e32);
+  result.e03 = (a.e00 * b.e03) + (a.e01 * b.e13) + (a.e02 * b.e23) + (a.e03 * b.e33);
+
+  result.e10 = (a.e10 * b.e00) + (a.e11 * b.e10) + (a.e12 * b.e20) + (a.e13 * b.e30);
+  result.e11 = (a.e10 * b.e01) + (a.e11 * b.e11) + (a.e12 * b.e21) + (a.e13 * b.e31);
+  result.e12 = (a.e10 * b.e02) + (a.e11 * b.e12) + (a.e12 * b.e22) + (a.e13 * b.e32);
+  result.e13 = (a.e10 * b.e03) + (a.e11 * b.e13) + (a.e12 * b.e23) + (a.e13 * b.e33);
+
+  result.e20 = (a.e20 * b.e00) + (a.e21 * b.e10) + (a.e22 * b.e20) + (a.e23 * b.e30);
+  result.e21 = (a.e20 * b.e01) + (a.e21 * b.e11) + (a.e22 * b.e21) + (a.e23 * b.e31);
+  result.e22 = (a.e20 * b.e02) + (a.e21 * b.e12) + (a.e22 * b.e22) + (a.e23 * b.e32);
+  result.e23 = (a.e20 * b.e03) + (a.e21 * b.e13) + (a.e22 * b.e23) + (a.e23 * b.e33);
+
+  result.e30 = (a.e30 * b.e00) + (a.e31 * b.e10) + (a.e32 * b.e20) + (a.e33 * b.e30);
+  result.e31 = (a.e30 * b.e01) + (a.e31 * b.e11) + (a.e32 * b.e21) + (a.e33 * b.e31);
+  result.e32 = (a.e30 * b.e02) + (a.e31 * b.e12) + (a.e32 * b.e22) + (a.e33 * b.e32);
+  result.e33 = (a.e30 * b.e03) + (a.e31 * b.e13) + (a.e32 * b.e23) + (a.e33 * b.e33);
+
+  return result;
+}
+
+// http://www.euclideanspace.com/maths/algebra/matrix/functions/inverse/fourD/index.htm
+RWM_DEF mat4 m4_inverse(mat4 m) {
+  mat4 result = { 0.0f };
+
+  float det =
+    m.e03 * m.e12 * m.e21 * m.e30-m.e02 * m.e13 * m.e21 * m.e30-m.e03 * m.e11 * m.e22 * m.e30+m.e01 * m.e13 * m.e22 * m.e30 +
+    m.e02 * m.e11 * m.e23 * m.e30-m.e01 * m.e12 * m.e23 * m.e30-m.e03 * m.e12 * m.e20 * m.e31+m.e02 * m.e13 * m.e20 * m.e31 +
+    m.e03 * m.e10 * m.e22 * m.e31-m.e00 * m.e13 * m.e22 * m.e31-m.e02 * m.e10 * m.e23 * m.e31+m.e00 * m.e12 * m.e23 * m.e31 +
+    m.e03 * m.e11 * m.e20 * m.e32-m.e01 * m.e13 * m.e20 * m.e32-m.e03 * m.e10 * m.e21 * m.e32+m.e00 * m.e13 * m.e21 * m.e32 +
+    m.e01 * m.e10 * m.e23 * m.e32-m.e00 * m.e11 * m.e23 * m.e32-m.e02 * m.e11 * m.e20 * m.e33+m.e01 * m.e12 * m.e20 * m.e33 +
+    m.e02 * m.e10 * m.e21 * m.e33-m.e00 * m.e12 * m.e21 * m.e33-m.e01 * m.e10 * m.e22 * m.e33+m.e00 * m.e11 * m.e22 * m.e33;
+
+  if (det == 0.0) return m4_identity();
+
+  float inv_det = 1.0f/det;
+  result.e00 = inv_det * (m.e12*m.e23*m.e31 - m.e13*m.e22*m.e31 + m.e13*m.e21*m.e32 - m.e11*m.e23*m.e32 - m.e12*m.e21*m.e33 + m.e11*m.e22*m.e33);
+  result.e01 = inv_det * (m.e03*m.e22*m.e31 - m.e02*m.e23*m.e31 - m.e03*m.e21*m.e32 + m.e01*m.e23*m.e32 + m.e02*m.e21*m.e33 - m.e01*m.e22*m.e33);
+  result.e02 = inv_det * (m.e02*m.e13*m.e31 - m.e03*m.e12*m.e31 + m.e03*m.e11*m.e32 - m.e01*m.e13*m.e32 - m.e02*m.e11*m.e33 + m.e01*m.e12*m.e33);
+  result.e03 = inv_det * (m.e03*m.e12*m.e21 - m.e02*m.e13*m.e21 - m.e03*m.e11*m.e22 + m.e01*m.e13*m.e22 + m.e02*m.e11*m.e23 - m.e01*m.e12*m.e23);
+  result.e10 = inv_det * (m.e13*m.e22*m.e30 - m.e12*m.e23*m.e30 - m.e13*m.e20*m.e32 + m.e10*m.e23*m.e32 + m.e12*m.e20*m.e33 - m.e10*m.e22*m.e33);
+  result.e11 = inv_det * (m.e02*m.e23*m.e30 - m.e03*m.e22*m.e30 + m.e03*m.e20*m.e32 - m.e00*m.e23*m.e32 - m.e02*m.e20*m.e33 + m.e00*m.e22*m.e33);
+  result.e12 = inv_det * (m.e03*m.e12*m.e30 - m.e02*m.e13*m.e30 - m.e03*m.e10*m.e32 + m.e00*m.e13*m.e32 + m.e02*m.e10*m.e33 - m.e00*m.e12*m.e33);
+  result.e13 = inv_det * (m.e02*m.e13*m.e20 - m.e03*m.e12*m.e20 + m.e03*m.e10*m.e22 - m.e00*m.e13*m.e22 - m.e02*m.e10*m.e23 + m.e00*m.e12*m.e23);
+  result.e20 = inv_det * (m.e11*m.e23*m.e30 - m.e13*m.e21*m.e30 + m.e13*m.e20*m.e31 - m.e10*m.e23*m.e31 - m.e11*m.e20*m.e33 + m.e10*m.e21*m.e33);
+  result.e21 = inv_det * (m.e03*m.e21*m.e30 - m.e01*m.e23*m.e30 - m.e03*m.e20*m.e31 + m.e00*m.e23*m.e31 + m.e01*m.e20*m.e33 - m.e00*m.e21*m.e33);
+  result.e22 = inv_det * (m.e01*m.e13*m.e30 - m.e03*m.e11*m.e30 + m.e03*m.e10*m.e31 - m.e00*m.e13*m.e31 - m.e01*m.e10*m.e33 + m.e00*m.e11*m.e33);
+  result.e23 = inv_det * (m.e03*m.e11*m.e20 - m.e01*m.e13*m.e20 - m.e03*m.e10*m.e21 + m.e00*m.e13*m.e21 + m.e01*m.e10*m.e23 - m.e00*m.e11*m.e23);
+  result.e30 = inv_det * (m.e12*m.e21*m.e30 - m.e11*m.e22*m.e30 - m.e12*m.e20*m.e31 + m.e10*m.e22*m.e31 + m.e11*m.e20*m.e32 - m.e10*m.e21*m.e32);
+  result.e31 = inv_det * (m.e01*m.e22*m.e30 - m.e02*m.e21*m.e30 + m.e02*m.e20*m.e31 - m.e00*m.e22*m.e31 - m.e01*m.e20*m.e32 + m.e00*m.e21*m.e32);
+  result.e32 = inv_det * (m.e02*m.e11*m.e30 - m.e01*m.e12*m.e30 - m.e02*m.e10*m.e31 + m.e00*m.e12*m.e31 + m.e01*m.e10*m.e32 - m.e00*m.e11*m.e32);
+  result.e33 = inv_det * (m.e01*m.e12*m.e20 - m.e02*m.e11*m.e20 + m.e02*m.e10*m.e21 - m.e00*m.e12*m.e21 - m.e01*m.e10*m.e22 + m.e00*m.e11*m.e22);
+
+  return result;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// __QUATERNION
+///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF Quaternion q_init(float x, float y, float z, float w) {
+  Quaternion result = { x, y, z, w };
+  return result;
+}
+
+RWM_DEF Quaternion q_identity() {
+  Quaternion result = { 0.0f, 0.0f, 0.0f, 1.0f };
+  return result;
+}
+
+RWM_DEF Quaternion q_init_v4(vec4 v) {
+  Quaternion result = { v.x, v.y, v.z, v.w };
+  return result;
+}
+
+//RWM_DEF Quaternion q_add(Quaternion q1, Quaternion q2) {
+//}
+
+//RWM_DEF Quaternion q_subtract(Quaternion q1, Quaternion q2) {
+//}
+
+//RWM_DEF Quaternion q_mult(Quaternion q1, Quaternion q2) {
+//}
+
+//RWM_DEF Quaternion q_scalar_mult(float a, Quaternion q) {
+//}
+
+//RWM_DEF Quaternion q_scalar_div(Quaternion q, float f) {
+//}
+
+//RWM_DEF float q_inner(Quaternion q1, Quaternion q2) {
+//}
+
+RWM_DEF float q_length(Quaternion q) {
+#if defined(RWM_USE_INTRINSICS)
+  float result = rw_sqrt(SQUARE(q.x) + SQUARE(q.y) + SQUARE(q.z) + SQUARE(q.w));
+#else
+  float result = sqrt(SQUARE(q.x) + SQUARE(q.y) + SQUARE(q.z) + SQUARE(q.w));
+#endif
+  return result;
+}
+
+RWM_DEF Quaternion q_inverse(Quaternion q) {
+  // conjugate of q times length squared
+  // TODO(ray): Assert that the length isn't 0
+  float len = q_length(q);
+  Quaternion result = q;
+  result.x *= -1/SQUARE(len);
+  result.y *= -1/SQUARE(len);
+  result.z *= -1/SQUARE(len);
+  return result;
+}
+
+RWM_DEF Quaternion q_normalize(Quaternion q) {
+  float len = q_length(q);
+  Quaternion result = {
+    q.x / len,
+    q.y / len,
+    q.z / len,
+    q.w / len
+  };
+  return result;
+}
+
+#ifdef __cplusplus
+// Quaternion operator overloading here
+#endif // #ifdef __cplusplus for quaternion
+
+///////////////////////////////////////////////////////////////////////////////
+// __RECT2
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
+// __RECT3
+///////////////////////////////////////////////////////////////////////////////
+
+#endif // ifdef RWM_IMPLEMENTATION
+
+#endif // #ifndef __RW_MATH_H__
