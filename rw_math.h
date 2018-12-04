@@ -1,5 +1,5 @@
-#ifndef __RW_MatH_H__
-#define __RW_MatH_H__
+#ifndef __RW_MATH_H__
+#define __RW_MATH_H__
 
 // UNCOMMENT (OR DEFINE) THIS LINE IF YOU WANT THIS LIBRARY TO BE HEADER ONLY
 //#define RWM_HEADER_ONLY
@@ -183,8 +183,9 @@ _a > _b ? _a : _b; })
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
-// __IMPLEMENTATIONS
+// __IMPLEMENTATION
 ///////////////////////////////////////////////////////////////////////////////
+
 #if defined(RWM_IMPLEMENTATION) || defined(RWM_HEADER_ONLY)
 
 #include <math.h>

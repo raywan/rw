@@ -4,6 +4,8 @@
 #define RWM_IMPLEMENTATION
 #include "../rw_math.h"
 #include "foo.h"
+#define RWMEM_IMPLEMENTATION
+#include "../rw_memory.h"
 
 using namespace std;
 int main() {
@@ -26,4 +28,18 @@ int main() {
   v3_puts(&a);
   printf("%f\n", v3_length(a));
 
+  int *arr = (int *) malloc(1);
+  for (int i = 0; i < 1; i++) {
+    arr[i] = 1;
+  }
+
+  char *p = (char *) rw_aligned_malloc(19, 8);
+  assert(IS_ALIGNED(p, 8));
+  printf("%p\n", p);
+  for (int i = 0; i < 19; i++) {
+    p[i] = 'a';
+  }
+  p[18] = '\0';
+  printf("%s\n", p);
+  rw_free(p);
 }
