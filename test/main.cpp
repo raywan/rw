@@ -27,6 +27,8 @@ int main() {
   Vec3 a = (v2 + v3)*2.0;
   v3_puts(&a);
   printf("%f\n", v3_length(a));
+  a = v3_normalize(a);
+  v3_printf("normalized", &a);
 
   int *arr = (int *) malloc(1);
   for (int i = 0; i < 1; i++) {

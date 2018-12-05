@@ -3,6 +3,16 @@
 
 #include <stdint.h>
 
+// Detect compiler type (for intrinsics)
+#if !defined(RW_DISABLE_INTRINSICS)
+#define RW_USE_INTRINSICS
+#if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
+#include <x86intrin.h>
+#elif defined(__MSC_VER)
+#include <intrin.h>
+#endif
+#endif // #if !defined(RW_DISABLE_INTRINSICS)
+
 typedef int8_t i8;
 typedef int16_t i16;
 typedef int32_t i32;
@@ -40,6 +50,9 @@ typedef union Vec4 {
   struct { float x, y, z, w; };
   struct { float r, g, b, a; };
   float e[4];
+#if defined(RW_USE_INTRINSICS)
+  __m128 v;
+#endif
 } Vec4;
 
 typedef union Mat3 {
@@ -60,6 +73,9 @@ typedef union Mat4 {
     float e30, e31, e32, e33;
   };
   float e[4][4];
+#if defined(RW_USE_INTRINSICS)
+  __m128 row[4];
+#endif
 } Mat4;
 
 typedef union Quaternion {

@@ -5,13 +5,14 @@
 //#define RWM_HEADER_ONLY
 
 // Detect compiler type (for intrinsics)
+#if !defined(RW_DISABLE_INTRINSICS)
+#define RW_USE_INTRINSICS
 #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
 #include <x86intrin.h>
-#define RWM_USE_INTRINSICS
 #elif defined(__MSC_VER)
 #include <intrin.h>
-#define RWM_USE_INTRINSICS
 #endif
+#endif // #if !defined(RW_DISABLE_INTRINSICS)
 
 #if defined(RWM_STATIC)
   #define RWM_DEF static
@@ -44,9 +45,8 @@ RWM_DEF float clamp(float lower, float val, float upper);
 RWM_DEF float clamp01(float val);
 RWM_DEF float to_radians(float degrees);
 RWM_DEF float to_degrees(float radians);
-#if defined(RWM_USE_INTRINSICS)
 RWM_DEF float rw_sqrt(float val);
-#endif
+RWM_DEF float rw_rsqrt(float val);
 
 // __Vec2
 RWM_DEF void v2_puts(Vec2 *v);
@@ -188,9 +188,9 @@ _a > _b ? _a : _b; })
 
 #if defined(RWM_IMPLEMENTATION) || defined(RWM_HEADER_ONLY)
 
-#include <math.h>
+#include <math.h> // sqrt
 #include <stdio.h> // printf
-#include <float.h> // FLT_MAX, FLT_MIN
+#include <float.h> // FLT_MAX
 
 ///////////////////////////////////////////////////////////////////////////////
 // __UTILITY
@@ -222,15 +222,28 @@ RWM_DEF float to_degrees(float radians) {
   return result;
 }
 
-#if defined(RWM_USE_INTRINSICS)
 RWM_DEF float rw_sqrt(float val) {
+  float result;
+#if defined(RW_USE_INTRINSICS)
   // _mm_set_ss : copy a 32 bit float to the lower element, zero the upper three
   // _mm_sqrt_ss : computes sqrt of lower 32 bit float
   // __mm_cvtss_f32 : copies lower 32 bit float to destination type (float)
-  float result = _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(val)));
+  result = _mm_cvtss_f32(_mm_sqrt_ss(_mm_set_ss(val)));
+#else
+  result = sqrt(val);
+#endif
   return result;
 }
+
+RWM_DEF float rw_rsqrt(float val) {
+  float result;
+#if defined(RW_USE_INTRINSICS)
+  result = _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(val)));
+#else
+  result = 1.0f/sqrt(val);
 #endif
+  return result;
+}
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -291,10 +304,10 @@ RWM_DEF float v2_length(Vec2 v) {
 }
 
 RWM_DEF Vec2 v2_normalize(Vec2 v) {
-  float norm = v2_length(v);
+  float inv_norm = rw_rsqrt(v2_length_squared(v));
   Vec2 result = {
-    v.x / norm,
-    v.y / norm
+    v.x * inv_norm,
+    v.y * inv_norm
   };
   return result;
 }
@@ -435,11 +448,11 @@ RWM_DEF float v3_length(Vec3 v) {
 }
 
 RWM_DEF Vec3 v3_normalize(Vec3 v) {
-  float norm = v3_length(v);
+  float inv_norm = rw_rsqrt(v3_length_squared(v));
   Vec3 result = {
-    v.x / norm,
-    v.y / norm,
-    v.z / norm
+    v.x * inv_norm,
+    v.y * inv_norm,
+    v.z * inv_norm
   };
   return result;
 }
@@ -529,6 +542,10 @@ RWM_DEF Vec3 &operator*=(Vec3 &v, float a) {
 }
 
 #endif // #ifdef __cplusplus for Vec3
+
+///////////////////////////////////////////////////////////////////////////////
+// __Vec4
+///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 // __Mat4
@@ -727,7 +744,7 @@ RWM_DEF Quaternion q_init_v4(Vec4 v) {
 //}
 
 RWM_DEF float q_length(Quaternion q) {
-#if defined(RWM_USE_INTRINSICS)
+#if defined(RW_USE_INTRINSICS)
   float result = rw_sqrt(SQUARE(q.x) + SQUARE(q.y) + SQUARE(q.z) + SQUARE(q.w));
 #else
   float result = sqrt(SQUARE(q.x) + SQUARE(q.y) + SQUARE(q.z) + SQUARE(q.w));
@@ -747,12 +764,12 @@ RWM_DEF Quaternion q_inverse(Quaternion q) {
 }
 
 RWM_DEF Quaternion q_normalize(Quaternion q) {
-  float len = q_length(q);
+  float inv_len = rw_rsqrt(SQUARE(q.x) + SQUARE(q.y) + SQUARE(q.z) + SQUARE(q.w));
   Quaternion result = {
-    q.x / len,
-    q.y / len,
-    q.z / len,
-    q.w / len
+    q.x * inv_len,
+    q.y * inv_len,
+    q.z * inv_len,
+    q.w * inv_len
   };
   return result;
 }
