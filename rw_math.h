@@ -79,6 +79,22 @@ RWM_DEF float v3_inner(Vec3 a, Vec3 b);
 RWM_DEF Vec3 v3_cross(Vec3 a, Vec3 b);
 RWM_DEF Vec3 v3_lerp(Vec3 a, float t, Vec3 b);
 
+// __Vec4
+RWM_DEF void v4_puts(Vec4 *v);
+RWM_DEF void v4_printf(const char *label, Vec4 *v);
+RWM_DEF Vec4 v4_init(float x, float y, float z);
+RWM_DEF Vec4 v4_zero();
+RWM_DEF Vec4 v4_add(Vec4 a, Vec4 b);
+RWM_DEF Vec4 v4_subtract(Vec4 a, Vec4 b);
+RWM_DEF Vec4 v4_scalar_mult(float a, Vec4 v);
+RWM_DEF Vec4 v4_scalar_div(Vec4 v, float a);
+RWM_DEF float v4_length_squared(Vec4 v);
+RWM_DEF float v4_length(Vec4 v);
+RWM_DEF Vec4 v4_normalize(Vec4 v);
+RWM_DEF float v4_inner(Vec4 a, Vec4 b);
+RWM_DEF Vec4 v4_cross(Vec4 a, Vec4 b);
+RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b);
+
 // __Mat4
 RWM_DEF void m4_puts(Mat4 *m);
 RWM_DEF Mat4 m4_diagonal(float a);
@@ -148,6 +164,14 @@ RWM_DEF Vec3 operator*(float a, Vec3 v);
 RWM_DEF Vec3 operator*(Vec3 v, float a);
 RWM_DEF Vec3 &operator*=(Vec3 &v, float a);
 
+RWM_DEF Vec4 operator+(Vec4 a, Vec4 b);
+RWM_DEF Vec4 &operator+=(Vec4 &a, Vec4 b);
+RWM_DEF Vec4 operator-(Vec4 a);
+RWM_DEF Vec4 operator-(Vec4 a, Vec4 b);
+RWM_DEF Vec4 &operator-=(Vec4 &a, Vec4 b);
+RWM_DEF Vec4 operator*(float a, Vec4 v);
+RWM_DEF Vec4 operator*(Vec4 v, float a);
+RWM_DEF Vec4 &operator*=(Vec4 &v, float a);
 // TODO(ray): Add Matrix ops
 #endif
 
@@ -546,6 +570,172 @@ RWM_DEF Vec3 &operator*=(Vec3 &v, float a) {
 ///////////////////////////////////////////////////////////////////////////////
 // __Vec4
 ///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF void v4_puts(Vec4 *v) {
+  printf("[%f, %f, %f, %f]\n", v->x, v->y, v->z, v->w);
+}
+
+RWM_DEF void v4_printf(const char *label, Vec4 *v) {
+  printf("%s: [%f, %f, %f, %f]\n", label, v->x, v->y, v->z, v->w);
+}
+
+RWM_DEF Vec4 v4_init(float x, float y, float z, float w) {
+  Vec4 result = { x, y, z, w };
+  return result;
+}
+
+RWM_DEF Vec4 v4_zero() {
+  Vec4 result = { 0.0f, 0.0f, 0.0f, 0.0f };
+  return result;
+}
+
+RWM_DEF Vec4 v4_add(Vec4 a, Vec4 b) {
+  Vec4 result = {
+    a.x + b.x,
+    a.y + b.y,
+    a.z + b.z,
+    a.w + b.w
+  };
+  return result;
+}
+
+RWM_DEF Vec4 v4_subtract(Vec4 a, Vec4 b) {
+  Vec4 result = {
+    a.x - b.x,
+    a.y - b.y,
+    a.z - b.z,
+    a.w - b.w
+  };
+  return result;
+}
+
+RWM_DEF Vec4 v4_scalar_mult(float a, Vec4 v) {
+  Vec4 result = {
+    a * v.x,
+    a * v.y,
+    a * v.z,
+    a * v.w
+  };
+  return result;
+}
+
+RWM_DEF Vec4 v4_scalar_div(Vec4 v, float a) {
+  // TODO(ray): Assert we're not dividing by 0
+  Vec4 result = {
+    v.x/a,
+    v.y/a,
+    v.z/a,
+    v.w/a
+  };
+  return result;
+}
+
+RWM_DEF float v4_length_squared(Vec4 v) {
+  return SQUARE(v.x) + SQUARE(v.y) + SQUARE(v.z) + SQUARE(v.w);
+}
+
+RWM_DEF float v4_length(Vec4 v) {
+  return rw_sqrt(SQUARE(v.x) + SQUARE(v.y) + SQUARE(v.z) + SQUARE(v.w));
+}
+
+RWM_DEF Vec4 v4_normalize(Vec4 v) {
+  float inv_norm = rw_rsqrt(v4_length_squared(v));
+  Vec4 result = {
+    v.x * inv_norm,
+    v.y * inv_norm,
+    v.z * inv_norm,
+    v.w * inv_norm
+  };
+  return result;
+}
+
+RWM_DEF float v4_inner(Vec4 a, Vec4 b) {
+  return (a.x * b.x) +
+         (a.y * b.y) +
+         (a.z * b.z) +
+         (a.w * b.w);
+}
+
+RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b) {
+  Vec4 result;
+  result.x = lerp(a.x, t, b.x);
+  result.y = lerp(a.y, t, b.y);
+  result.z = lerp(a.z, t, b.z);
+  result.w = lerp(a.w, t, b.w);
+  return result;
+}
+
+#ifdef __cplusplus
+RWM_DEF Vec4 operator+(Vec4 a, Vec4 b) {
+  Vec4 result;
+  result.x = a.x + b.x;
+  result.y = a.y + b.y;
+  result.z = a.z + b.z;
+  result.w = a.w + b.w;
+  return result;
+}
+
+RWM_DEF Vec4 &operator+=(Vec4 &a, Vec4 b) {
+  a.x += b.x;
+  a.y += b.y;
+  a.z += b.z;
+  a.w += b.w;
+  return a;
+}
+
+RWM_DEF Vec4 operator-(Vec4 a) {
+  Vec4 result;
+  result.x = -a.x;
+  result.y = -a.y;
+  result.z = -a.z;
+  result.w = -a.w;
+  return result;
+}
+
+RWM_DEF Vec4 operator-(Vec4 a, Vec4 b) {
+  Vec4 result;
+  result.x = a.x - b.x;
+  result.y = a.y - b.y;
+  result.z = a.z - b.z;
+  result.w = a.w - b.w;
+  return result;
+}
+
+RWM_DEF Vec4 &operator-=(Vec4 &a, Vec4 b) {
+  a.x -= b.x;
+  a.y -= b.y;
+  a.z -= b.z;
+  a.w -= b.w;
+  return a;
+}
+
+RWM_DEF Vec4 operator*(float a, Vec4 v) {
+  Vec4 result;
+  result.x = a * v.x;
+  result.y = a * v.y;
+  result.z = a * v.z;
+  result.w = a * v.w;
+  return result;
+}
+
+RWM_DEF Vec4 operator*(Vec4 v, float a) {
+  Vec4 result;
+  result.x = a * v.x;
+  result.y = a * v.y;
+  result.z = a * v.z;
+  result.w = a * v.w;
+  return result;
+}
+
+RWM_DEF Vec4 &operator*=(Vec4 &v, float a) {
+  v.x *= a;
+  v.y *= a;
+  v.z *= a;
+  v.w *= a;
+  return v;
+}
+
+#endif // #ifdef __cplusplus for Vec4
 
 ///////////////////////////////////////////////////////////////////////////////
 // __Mat4
