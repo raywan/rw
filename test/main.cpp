@@ -30,6 +30,14 @@ int main() {
   a = v3_normalize(a);
   v3_printf("normalized", &a);
 
+  Vec4 v4 = v4_init(1.0, 2.0, 3.0, 4.0);
+  Vec4 v4_2 = v4_init(1.0, 2.0, 3.0, 4.0);
+  v4_printf("v4", &v4);
+  Vec4 result = v4_add(v4, v4_2);
+  v4_printf("v4 + v4_2", &result);
+  result = v4_subtract(v4, v4_2);
+  v4_printf("v4 - v4_2", &result);
+
   int *arr = (int *) malloc(1);
   for (int i = 0; i < 1; i++) {
     arr[i] = 1;

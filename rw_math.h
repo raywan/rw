@@ -580,7 +580,12 @@ RWM_DEF void v4_printf(const char *label, Vec4 *v) {
 }
 
 RWM_DEF Vec4 v4_init(float x, float y, float z, float w) {
-  Vec4 result = { x, y, z, w };
+  Vec4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.v = _mm_setr_ps(x, y, z, w);
+#else
+  result = { x, y, z, w };
+#endif
   return result;
 }
 
@@ -590,22 +595,32 @@ RWM_DEF Vec4 v4_zero() {
 }
 
 RWM_DEF Vec4 v4_add(Vec4 a, Vec4 b) {
-  Vec4 result = {
+  Vec4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.v = _mm_add_ps(a.v, b.v);
+#else
+  result = {
     a.x + b.x,
     a.y + b.y,
     a.z + b.z,
     a.w + b.w
   };
+#endif
   return result;
 }
 
 RWM_DEF Vec4 v4_subtract(Vec4 a, Vec4 b) {
-  Vec4 result = {
+  Vec4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.v = _mm_sub_ps(a.v, b.v);
+#else
+  result = {
     a.x - b.x,
     a.y - b.y,
     a.z - b.z,
     a.w - b.w
   };
+#endif
   return result;
 }
 
