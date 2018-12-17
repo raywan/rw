@@ -51,7 +51,7 @@ typedef union Vec4 {
   struct { float r, g, b, a; };
   float e[4];
 #if defined(RW_USE_INTRINSICS)
-  __m128 v;
+  __m128 m;
 #endif
 } Vec4;
 

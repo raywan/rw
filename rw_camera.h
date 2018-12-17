@@ -6,9 +6,10 @@
 #include "rw_math.h"
 
 typedef struct Camera {
-  vec3 up;
-  vec3 position;
-  vec3 target;
+  Vec3 up;
+  Vec3 position;
+  Vec3 target;
+  float fov_y;
 }
 
 #endif

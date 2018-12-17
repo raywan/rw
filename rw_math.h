@@ -582,7 +582,7 @@ RWM_DEF void v4_printf(const char *label, Vec4 *v) {
 RWM_DEF Vec4 v4_init(float x, float y, float z, float w) {
   Vec4 result;
 #if defined(RW_USE_INTRINSICS)
-  result.v = _mm_setr_ps(x, y, z, w);
+  result.m = _mm_setr_ps(x, y, z, w);
 #else
   result = { x, y, z, w };
 #endif
@@ -597,7 +597,7 @@ RWM_DEF Vec4 v4_zero() {
 RWM_DEF Vec4 v4_add(Vec4 a, Vec4 b) {
   Vec4 result;
 #if defined(RW_USE_INTRINSICS)
-  result.v = _mm_add_ps(a.v, b.v);
+  result.m = _mm_add_ps(a.m, b.m);
 #else
   result = {
     a.x + b.x,
@@ -612,7 +612,7 @@ RWM_DEF Vec4 v4_add(Vec4 a, Vec4 b) {
 RWM_DEF Vec4 v4_subtract(Vec4 a, Vec4 b) {
   Vec4 result;
 #if defined(RW_USE_INTRINSICS)
-  result.v = _mm_sub_ps(a.v, b.v);
+  result.m = _mm_sub_ps(a.m, b.m);
 #else
   result = {
     a.x - b.x,
@@ -625,12 +625,17 @@ RWM_DEF Vec4 v4_subtract(Vec4 a, Vec4 b) {
 }
 
 RWM_DEF Vec4 v4_scalar_mult(float a, Vec4 v) {
-  Vec4 result = {
+  Vec4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.m = _mm_mul_ps(_mm_set1_ps(a), v.m);
+#else
+  result = {
     a * v.x,
     a * v.y,
     a * v.z,
     a * v.w
   };
+#endif
   return result;
 }
 
@@ -673,20 +678,20 @@ RWM_DEF float v4_inner(Vec4 a, Vec4 b) {
 
 RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b) {
   Vec4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.m = _mm_add_ps(_mm_mul_ps(_mm_set_ps1(1.0f-t), a.m), _mm_mul_ps(_mm_set_ps1(t), b.m));
+#else
   result.x = lerp(a.x, t, b.x);
   result.y = lerp(a.y, t, b.y);
   result.z = lerp(a.z, t, b.z);
   result.w = lerp(a.w, t, b.w);
+#endif
   return result;
 }
 
 #ifdef __cplusplus
 RWM_DEF Vec4 operator+(Vec4 a, Vec4 b) {
-  Vec4 result;
-  result.x = a.x + b.x;
-  result.y = a.y + b.y;
-  result.z = a.z + b.z;
-  result.w = a.w + b.w;
+  Vec4 result = v4_add(a, b);
   return result;
 }
 
@@ -708,11 +713,7 @@ RWM_DEF Vec4 operator-(Vec4 a) {
 }
 
 RWM_DEF Vec4 operator-(Vec4 a, Vec4 b) {
-  Vec4 result;
-  result.x = a.x - b.x;
-  result.y = a.y - b.y;
-  result.z = a.z - b.z;
-  result.w = a.w - b.w;
+  Vec4 result = v4_subtract(a, b);
   return result;
 }
 
@@ -725,20 +726,12 @@ RWM_DEF Vec4 &operator-=(Vec4 &a, Vec4 b) {
 }
 
 RWM_DEF Vec4 operator*(float a, Vec4 v) {
-  Vec4 result;
-  result.x = a * v.x;
-  result.y = a * v.y;
-  result.z = a * v.z;
-  result.w = a * v.w;
+  Vec4 result = v4_scalar_mult(a, v);
   return result;
 }
 
 RWM_DEF Vec4 operator*(Vec4 v, float a) {
-  Vec4 result;
-  result.x = a * v.x;
-  result.y = a * v.y;
-  result.z = a * v.z;
-  result.w = a * v.w;
+  Vec4 result = v4_scalar_mult(a, v);
   return result;
 }
 
@@ -1037,8 +1030,8 @@ RWM_DEF Rect3 r3_intersection(Rect3 a, Rect3 b) {
 
 RWM_DEF bool r3_overlaps(Rect3 a, Rect3 b) {
   int x = (a.max_px >= b.min_px) && (a.min_px <= b.max_px);
-	int y = (a.max_py >= b.min_py) && (a.min_py <= b.max_py);
-	int z = (a.max_pz >= b.min_pz) && (a.min_pz <= b.max_pz);
+  int y = (a.max_py >= b.min_py) && (a.min_py <= b.max_py);
+  int z = (a.max_pz >= b.min_pz) && (a.min_pz <= b.max_pz);
   return x && y && z;
 }
 
@@ -1098,4 +1091,4 @@ RWM_DEF Vec3 r3_offset(Rect3 r, Vec3 p) {
 
 #endif // ifdef RWM_IMPLEMENTATION
 
-#endif // #ifndef __RW_MatH_H__
+#endif // #ifndef __RW_MATH_H__
