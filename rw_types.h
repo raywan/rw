@@ -98,6 +98,8 @@ typedef union Rect2 {
     float min_px, min_py;
     float max_px, max_py;
   };
+  // idx 0 is the min point, and idx 1 is the max point
+  Vec3 p[2];
 } Rect2;
 
 typedef union Rect3 {
@@ -109,6 +111,8 @@ typedef union Rect3 {
     float min_px, min_py, min_pz;
     float max_px, max_py, max_pz;
   };
+  // idx 0 is the min point, and idx 1 is the max point
+  Vec3 p[2];
 } Rect3;
 
 #endif
