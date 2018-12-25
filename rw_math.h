@@ -60,6 +60,7 @@ RWM_DEF Vec2 v2_scalar_div(Vec2 v, float a);
 RWM_DEF float v2_length_squared(Vec2 v);
 RWM_DEF float v2_length(Vec2 v);
 RWM_DEF Vec2 v2_normalize(Vec2 v);
+RWM_DEF Vec2 v2_hadamard(Vec2 a, Vec2 b);
 RWM_DEF float v2_inner(Vec2 a, Vec2 b);
 RWM_DEF Vec2 v2_lerp(Vec2 a, float t, Vec2 b);
 
@@ -75,6 +76,7 @@ RWM_DEF Vec3 v3_scalar_div(Vec3 v, float a);
 RWM_DEF float v3_length_squared(Vec3 v);
 RWM_DEF float v3_length(Vec3 v);
 RWM_DEF Vec3 v3_normalize(Vec3 v);
+RWM_DEF Vec3 v3_hadamard(Vec3 a, Vec3 b);
 RWM_DEF float v3_inner(Vec3 a, Vec3 b);
 RWM_DEF Vec3 v3_cross(Vec3 a, Vec3 b);
 RWM_DEF Vec3 v3_lerp(Vec3 a, float t, Vec3 b);
@@ -91,6 +93,7 @@ RWM_DEF Vec4 v4_scalar_div(Vec4 v, float a);
 RWM_DEF float v4_length_squared(Vec4 v);
 RWM_DEF float v4_length(Vec4 v);
 RWM_DEF Vec4 v4_normalize(Vec4 v);
+RWM_DEF Vec4 v4_hadamard(Vec4 a, Vec4 b);
 RWM_DEF float v4_inner(Vec4 a, Vec4 b);
 RWM_DEF Vec4 v4_cross(Vec4 a, Vec4 b);
 RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b);
@@ -104,6 +107,7 @@ RWM_DEF Mat4 m4_add(Mat4 a, Mat4 b);
 RWM_DEF Mat4 m4_subtract(Mat4 a, Mat4 b);
 RWM_DEF Mat4 m4_scalar_mult(float a, Mat4 m);
 RWM_DEF Mat4 m4_multiply(Mat4 a, Mat4 b);
+RWM_DEF Mat4 m4_hadamard(Mat4 a, Mat4 b);
 RWM_DEF Mat4 m4_inverse(Mat4 m);
 
 // __QUATERNION
@@ -146,6 +150,7 @@ RWM_DEF Vec3 r3_offset(Rect3 r, Vec3 p); // Returns p relative to the box
 #endif
 
 #ifdef __cplusplus
+// __Vec2_op
 RWM_DEF Vec2 operator+(Vec2 a, Vec2 b);
 RWM_DEF Vec2 &operator+=(Vec2 &a, Vec2 b);
 RWM_DEF Vec2 operator-(Vec2 a);
@@ -153,8 +158,10 @@ RWM_DEF Vec2 operator-(Vec2 a, Vec2 b);
 RWM_DEF Vec2 &operator-=(Vec2 &a, Vec2 b);
 RWM_DEF Vec2 operator*(float a, Vec2 v);
 RWM_DEF Vec2 operator*(Vec2 v, float a);
+RWM_DEF Vec2 operator*(Vec2 a, Vec2 b);
 RWM_DEF Vec2 &operator*=(Vec2 &v, float a);
 
+// __Vec3_op
 RWM_DEF Vec3 operator+(Vec3 a, Vec3 b);
 RWM_DEF Vec3 &operator+=(Vec3 &a, Vec3 b);
 RWM_DEF Vec3 operator-(Vec3 a);
@@ -162,8 +169,10 @@ RWM_DEF Vec3 operator-(Vec3 a, Vec3 b);
 RWM_DEF Vec3 &operator-=(Vec3 &a, Vec3 b);
 RWM_DEF Vec3 operator*(float a, Vec3 v);
 RWM_DEF Vec3 operator*(Vec3 v, float a);
+RWM_DEF Vec3 operator*(Vec3 a, Vec3 b);
 RWM_DEF Vec3 &operator*=(Vec3 &v, float a);
 
+// __Vec3_op
 RWM_DEF Vec4 operator+(Vec4 a, Vec4 b);
 RWM_DEF Vec4 &operator+=(Vec4 &a, Vec4 b);
 RWM_DEF Vec4 operator-(Vec4 a);
@@ -171,6 +180,7 @@ RWM_DEF Vec4 operator-(Vec4 a, Vec4 b);
 RWM_DEF Vec4 &operator-=(Vec4 &a, Vec4 b);
 RWM_DEF Vec4 operator*(float a, Vec4 v);
 RWM_DEF Vec4 operator*(Vec4 v, float a);
+RWM_DEF Vec4 operator*(Vec4 a, Vec4 b);
 RWM_DEF Vec4 &operator*=(Vec4 &v, float a);
 // TODO(ray): Add Matrix ops
 #endif
@@ -336,6 +346,13 @@ RWM_DEF Vec2 v2_normalize(Vec2 v) {
   return result;
 }
 
+RWM_DEF Vec2 v2_hadamard(Vec2 a, Vec2 b) {
+  Vec2 result;
+  result.x = a.x * b.x;
+  result.y = a.y * b.y;
+  return result;
+}
+
 RWM_DEF float v2_inner(Vec2 a, Vec2 b) {
   return (a.x * b.x) +
          (a.y * b.y);
@@ -348,6 +365,7 @@ RWM_DEF Vec2 v2_lerp(Vec2 a, float t, Vec2 b) {
   return result;
 }
 
+// __Vec2_op
 #ifdef __cplusplus
 RWM_DEF Vec2 operator+(Vec2 a, Vec2 b) {
   Vec2 result;
@@ -395,6 +413,12 @@ RWM_DEF Vec2 operator*(Vec2 v, float a) {
   result.y = a * v.y;
   return result;
 }
+
+RWM_DEF Vec2 operator*(Vec2 a, Vec2 b) {
+  Vec2 result = v2_hadamard(a, b);
+  return result;
+}
+
 
 RWM_DEF Vec2 &operator*=(Vec2 &v, float a) {
   v.x *= a;
@@ -481,6 +505,14 @@ RWM_DEF Vec3 v3_normalize(Vec3 v) {
   return result;
 }
 
+RWM_DEF Vec3 v3_hadamard(Vec3 a, Vec3 b) {
+  Vec3 result;
+  result.x = a.x * b.x;
+  result.y = a.y * b.y;
+  result.z = a.z * b.z;
+  return result;
+}
+
 RWM_DEF float v3_inner(Vec3 a, Vec3 b) {
   return (a.x * b.x) +
          (a.y * b.y) +
@@ -503,6 +535,7 @@ RWM_DEF Vec3 v3_lerp(Vec3 a, float t, Vec3 b) {
   return result;
 }
 
+// __Vec3_op
 #ifdef __cplusplus
 RWM_DEF Vec3 operator+(Vec3 a, Vec3 b) {
   Vec3 result;
@@ -557,6 +590,12 @@ RWM_DEF Vec3 operator*(Vec3 v, float a) {
   result.z = a * v.z;
   return result;
 }
+
+RWM_DEF Vec3 operator*(Vec3 a, Vec3 b) {
+  Vec3 result = v3_hadamard(a, b);
+  return result;
+}
+
 
 RWM_DEF Vec3 &operator*=(Vec3 &v, float a) {
   v.x *= a;
@@ -669,6 +708,19 @@ RWM_DEF Vec4 v4_normalize(Vec4 v) {
   return result;
 }
 
+RWM_DEF Vec4 v4_hadamard(Vec4 a, Vec4 b) {
+  Vec4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.m = _mm_mul_ps(a.m, b.m);
+#else
+  result.x = a.x * b.x;
+  result.y = a.y * b.y;
+  result.z = a.z * b.z;
+  result.w = a.w * b.w;
+#endif
+  return result;
+}
+
 RWM_DEF float v4_inner(Vec4 a, Vec4 b) {
   return (a.x * b.x) +
          (a.y * b.y) +
@@ -689,6 +741,7 @@ RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b) {
   return result;
 }
 
+// __Vec4_op
 #ifdef __cplusplus
 RWM_DEF Vec4 operator+(Vec4 a, Vec4 b) {
   Vec4 result = v4_add(a, b);
@@ -732,6 +785,11 @@ RWM_DEF Vec4 operator*(float a, Vec4 v) {
 
 RWM_DEF Vec4 operator*(Vec4 v, float a) {
   Vec4 result = v4_scalar_mult(a, v);
+  return result;
+}
+
+RWM_DEF Vec4 operator*(Vec4 a, Vec4 b) {
+  Vec4 result = v4_hadamard(a, b);
   return result;
 }
 
@@ -866,6 +924,27 @@ RWM_DEF Mat4 m4_multiply(Mat4 a, Mat4 b) {
   result.e32 = (a.e30 * b.e02) + (a.e31 * b.e12) + (a.e32 * b.e22) + (a.e33 * b.e32);
   result.e33 = (a.e30 * b.e03) + (a.e31 * b.e13) + (a.e32 * b.e23) + (a.e33 * b.e33);
 
+  return result;
+}
+
+RWM_DEF Mat4 m4_hadamard(Mat4 a, Mat4 b) {
+  Mat4 result = { 0.0f };
+  result.e00 = a.e01 * b.e00;
+  result.e01 = a.e01 * b.e01;
+  result.e02 = a.e02 * b.e02;
+  result.e03 = a.e03 * b.e03;
+  result.e10 = a.e10 * b.e10;
+  result.e11 = a.e11 * b.e11;
+  result.e12 = a.e12 * b.e12;
+  result.e13 = a.e13 * b.e13;
+  result.e20 = a.e20 * b.e20;
+  result.e21 = a.e21 * b.e21;
+  result.e22 = a.e22 * b.e22;
+  result.e23 = a.e23 * b.e23;
+  result.e30 = a.e30 * b.e30;
+  result.e31 = a.e31 * b.e31;
+  result.e32 = a.e32 * b.e32;
+  result.e33 = a.e33 * b.e33;
   return result;
 }
 
