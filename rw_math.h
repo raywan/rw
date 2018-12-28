@@ -101,6 +101,7 @@ RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b);
 // __Mat4
 RWM_DEF void m4_puts(Mat4 *m);
 RWM_DEF Mat4 m4_diagonal(float a);
+RWM_DEF Mat4 m4_init(float t00, float t01, float t02, float t03, float t10, float t11, float t12, float t13, float t20, float t21, float t22, float t23, float t30, float t31, float t32, float t33);
 RWM_DEF Mat4 m4_identity();
 RWM_DEF float m4_trace(Mat4 m);
 RWM_DEF Mat4 m4_add(Mat4 a, Mat4 b);
@@ -816,6 +817,32 @@ RWM_DEF void m4_puts(Mat4 *m) {
   }
   puts("");
 }
+
+RWM_DEF Mat4 m4_init(float t00, float t01, float t02, float t03,
+                    float t10, float t11, float t12, float t13,
+                    float t20, float t21, float t22, float t23,
+                    float t30, float t31, float t32, float t33)
+{
+  Mat4 result;
+  result.e[0][0] = t00;
+  result.e[0][1] = t01;
+  result.e[0][2] = t02;
+  result.e[0][3] = t03;
+  result.e[1][0] = t10;
+  result.e[1][1] = t11;
+  result.e[1][2] = t12;
+  result.e[1][3] = t13;
+  result.e[2][0] = t20;
+  result.e[2][1] = t21;
+  result.e[2][2] = t22;
+  result.e[2][3] = t23;
+  result.e[3][0] = t30;
+  result.e[3][1] = t31;
+  result.e[3][2] = t32;
+  result.e[3][3] = t33;
+  return result;
+}
+
 
 RWM_DEF Mat4 m4_diagonal(float a) {
   Mat4 result = { 0.0f };
