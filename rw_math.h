@@ -1173,8 +1173,15 @@ RWM_DEF Rect3 r3_init(float min_x, float min_y, float min_z, float max_x, float 
   return result;
 }
 
-RWM_DEF Rect3 r3_init_v3(Vec3 min_p, Vec3 max_p) {
-  Rect3 result = { min_p, max_p }; return result;
+RWM_DEF Rect3 r3_init_v3(Vec3 p1, Vec3 p2) {
+  Rect3 result;
+  result.min_px = MIN(p1.x, p2.x);
+  result.min_py = MIN(p1.y, p2.y);
+  result.min_pz = MIN(p1.z, p2.z);
+  result.max_px = MAX(p1.x, p2.x);
+  result.max_py = MAX(p1.y, p2.y);
+  result.max_pz = MAX(p1.z, p2.z);
+  return result;
 }
 
 RWM_DEF Rect3 r3_intersection(Rect3 a, Rect3 b) {
