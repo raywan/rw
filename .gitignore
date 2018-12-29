@@ -256,4 +256,4 @@ $RECYCLE.BIN/
 
 # End of https://www.gitignore.io/api/c,vim,c++,emacs,macos,linux,windows,sublimetext,visualstudiocode
 
-test/main
+test/run_rw_test

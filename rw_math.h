@@ -84,7 +84,7 @@ RWM_DEF Vec3 v3_lerp(Vec3 a, float t, Vec3 b);
 // __Vec4
 RWM_DEF void v4_puts(Vec4 *v);
 RWM_DEF void v4_printf(const char *label, Vec4 *v);
-RWM_DEF Vec4 v4_init(float x, float y, float z);
+RWM_DEF Vec4 v4_init(float x, float y, float z, float w);
 RWM_DEF Vec4 v4_zero();
 RWM_DEF Vec4 v4_add(Vec4 a, Vec4 b);
 RWM_DEF Vec4 v4_subtract(Vec4 a, Vec4 b);
@@ -95,14 +95,15 @@ RWM_DEF float v4_length(Vec4 v);
 RWM_DEF Vec4 v4_normalize(Vec4 v);
 RWM_DEF Vec4 v4_hadamard(Vec4 a, Vec4 b);
 RWM_DEF float v4_inner(Vec4 a, Vec4 b);
-RWM_DEF Vec4 v4_cross(Vec4 a, Vec4 b);
 RWM_DEF Vec4 v4_lerp(Vec4 a, float t, Vec4 b);
 
 // __Mat4
 RWM_DEF void m4_puts(Mat4 *m);
 RWM_DEF Mat4 m4_diagonal(float a);
-RWM_DEF Mat4 m4_init(float t00, float t01, float t02, float t03, float t10, float t11, float t12, float t13, float t20, float t21, float t22, float t23, float t30, float t31, float t32, float t33);
 RWM_DEF Mat4 m4_identity();
+RWM_DEF Mat4 m4_init_v4(Vec4 r0, Vec4 r1, Vec4 r2, Vec4 r3);
+RWM_DEF Mat4 m4_init_f(float t00, float t01, float t02, float t03, float t10, float t11, float t12, float t13, float t20, float t21, float t22, float t23, float t30, float t31, float t32, float t33);
+RWM_DEF Mat4 m4_transpose(Mat4 m);
 RWM_DEF float m4_trace(Mat4 m);
 RWM_DEF Mat4 m4_add(Mat4 a, Mat4 b);
 RWM_DEF Mat4 m4_subtract(Mat4 a, Mat4 b);
@@ -818,12 +819,61 @@ RWM_DEF void m4_puts(Mat4 *m) {
   puts("");
 }
 
-RWM_DEF Mat4 m4_init(float t00, float t01, float t02, float t03,
+RWM_DEF Mat4 m4_diagonal(float a) {
+  Mat4 result = { 0.0f };
+  result.e[0][0] = a;
+  result.e[1][1] = a;
+  result.e[2][2] = a;
+  result.e[3][3] = a;
+  return result;
+}
+
+RWM_DEF Mat4 m4_identity() {
+  Mat4 result = m4_diagonal(1.0f);
+  return result;
+}
+
+RWM_DEF Mat4 m4_init_v4(Vec4 r0, Vec4 r1, Vec4 r2, Vec4 r3) {
+  Mat4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.row[0] = _mm_setr_ps(r0.x, r0.y, r0.z, r0.w);
+  result.row[1] = _mm_setr_ps(r1.x, r1.y, r1.z, r1.w);
+  result.row[2] = _mm_setr_ps(r2.x, r2.y, r2.z, r2.w);
+  result.row[3] = _mm_setr_ps(r3.x, r3.y, r3.z, r3.w);
+#else
+  result.e[0][0] = r0.x;
+  result.e[0][1] = r0.y;
+  result.e[0][2] = r0.z;
+  result.e[0][3] = r0.w;
+  result.e[1][0] = r1.x;
+  result.e[1][1] = r1.y;
+  result.e[1][2] = r1.z;
+  result.e[1][3] = r1.w;
+  result.e[2][0] = r2.x;
+  result.e[2][1] = r2.y;
+  result.e[2][2] = r2.z;
+  result.e[2][3] = r2.w;
+  result.e[3][0] = r3.x;
+  result.e[3][1] = r3.y;
+  result.e[3][2] = r3.z;
+  result.e[3][3] = r3.w;
+#endif
+  return result;
+
+}
+
+RWM_DEF Mat4 m4_init_f(float t00, float t01, float t02, float t03,
                     float t10, float t11, float t12, float t13,
                     float t20, float t21, float t22, float t23,
                     float t30, float t31, float t32, float t33)
 {
   Mat4 result;
+#if defined(RW_USE_INTRINSICS)
+  result.row[0] = _mm_setr_ps(t00, t01, t02, t03);
+  result.row[1] = _mm_setr_ps(t10, t11, t12, t13);
+  result.row[2] = _mm_setr_ps(t20, t21, t22, t23);
+  result.row[3] = _mm_setr_ps(t30, t31, t32, t33);
+#else
   result.e[0][0] = t00;
   result.e[0][1] = t01;
   result.e[0][2] = t02;
@@ -840,21 +890,25 @@ RWM_DEF Mat4 m4_init(float t00, float t01, float t02, float t03,
   result.e[3][1] = t31;
   result.e[3][2] = t32;
   result.e[3][3] = t33;
+#endif
   return result;
 }
 
+RWM_DEF Mat4 m4_transpose(Mat4 m) {
+  Mat4 result;
 
-RWM_DEF Mat4 m4_diagonal(float a) {
-  Mat4 result = { 0.0f };
-  result.e[0][0] = a;
-  result.e[1][1] = a;
-  result.e[2][2] = a;
-  result.e[3][3] = a;
-  return result;
-}
-
-RWM_DEF Mat4 m4_identity() {
-  Mat4 result = m4_diagonal(1.0f);
+#if defined(RW_USE_INTRINSICS)
+  _MM_TRANSPOSE4_PS(m.row[0], m.row[1], m.row[2], m.row[3]);
+  for (int i = 0; i < 4; i++) {
+    result.row[i] = m.row[i];
+  }
+#else
+#endif
+  for (int i = 0; i < 4; i++) {
+    for (int j = 0; j < 4; j++) {
+      result.e[i][j] = m.e[j][i];
+    }
+  }
   return result;
 }
 
