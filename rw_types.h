@@ -85,8 +85,8 @@ typedef union Quaternion {
 } Quaternion;
 
 typedef struct Transform {
-  Mat4 m;
-  Mat4 m_inv;
+  Mat4 t;
+  Mat4 t_inv;
 } Transform;
 
 typedef union Rect2 {
