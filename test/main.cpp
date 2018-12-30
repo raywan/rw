@@ -8,6 +8,7 @@
 #include "v2_test.h"
 #include "v3_test.h"
 #include "v4_test.h"
+#include "m4_test.h"
 
 #define RWMEM_IMPLEMENTATION
 #include "../rw_memory.h"
@@ -18,6 +19,7 @@ int main() {
   run_v2_test();
   run_v3_test();
   run_v4_test();
+  run_m4_test();
 
   int *arr = (int *) malloc(1);
   for (int i = 0; i < 1; i++) {

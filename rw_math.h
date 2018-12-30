@@ -898,10 +898,10 @@ RWM_DEF Mat4 m4_transpose(Mat4 m) {
   Mat4 result;
 
 #if defined(RW_USE_INTRINSICS)
-  _MM_TRANSPOSE4_PS(m.row[0], m.row[1], m.row[2], m.row[3]);
   for (int i = 0; i < 4; i++) {
     result.row[i] = m.row[i];
   }
+  _MM_TRANSPOSE4_PS(result.row[0], result.row[1], result.row[2], result.row[3]);
 #else
 #endif
   for (int i = 0; i < 4; i++) {
@@ -1010,7 +1010,7 @@ RWM_DEF Mat4 m4_multiply(Mat4 a, Mat4 b) {
 
 RWM_DEF Mat4 m4_hadamard(Mat4 a, Mat4 b) {
   Mat4 result = { 0.0f };
-  result.e00 = a.e01 * b.e00;
+  result.e00 = a.e00 * b.e00;
   result.e01 = a.e01 * b.e01;
   result.e02 = a.e02 * b.e02;
   result.e03 = a.e03 * b.e03;
