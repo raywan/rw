@@ -5,7 +5,7 @@
 
 #define EPSILON 0.00001f
 
-void v2_assert_eq(Vec2 v, float x, float y) {
+static inline void v2_assert_eq(Vec2 v, float x, float y) {
 	assert(v.x == x);
 	assert(v.y == y);
 }

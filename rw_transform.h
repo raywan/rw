@@ -29,6 +29,7 @@
 extern "C" {
 #endif
 
+RWTR_DEF Transform tr_init_m4(Mat4 *m);
 RWTR_DEF Transform tr_init_translate(float x, float y, float z);
 RWTR_DEF Transform tr_init_scale(float x, float y, float z);
 RWTR_DEF Transform tr_init_rotate_x(float degrees);
@@ -36,6 +37,7 @@ RWTR_DEF Transform tr_init_rotate_y(float degrees);
 RWTR_DEF Transform tr_init_rotate_z(float degrees);
 RWTR_DEF Transform tr_init_rotate(Vec3 axis, float degrees);
 RWTR_DEF Transform tr_compose(Transform *tr1, Transform *tr2);
+RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms);
 RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v);
 RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v);
 
@@ -46,6 +48,13 @@ RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v);
 #ifdef RWTR_IMPLEMENTATION
 
 #include <math.h>
+
+RWTR_DEF Transform tr_init_m4(Mat4 *m) {
+	Transform result;
+	result.t = *m;
+	result.t_inv = m4_inverse(*m);
+	return result;
+}
 
 RWTR_DEF Transform tr_init_translate(float x, float y, float z) {
 	Transform result;
@@ -174,6 +183,16 @@ RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v) {
 	result.y = tr->t.e[1][0]*v.x + tr->t.e[1][1]*v.y + tr->t.e[1][2]*v.z + tr->t.e[1][3]*v.w;
 	result.z = tr->t.e[2][0]*v.x + tr->t.e[2][1]*v.y + tr->t.e[2][2]*v.z + tr->t.e[2][3]*v.w;
 	result.w = tr->t.e[3][0]*v.x + tr->t.e[3][1]*v.y + tr->t.e[3][2]*v.z + tr->t.e[3][3]*v.w;
+	return result;
+}
+
+RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms) {
+	// TODO(ray): Assert that there is greater than 1 transform
+	Transform result = *(transforms[0]);
+	for (int i = 1; i < num_transforms; i++) {
+		result.t = m4_multiply(result.t, transforms[i]->t);
+		result.t_inv = m4_multiply(result.t_inv, transforms[i]->t_inv);
+	}
 	return result;
 }
 

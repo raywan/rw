@@ -4,7 +4,8 @@
 #include "../rw_math.h"
 
 #define EPSILON 0.00001f
-void v4_assert_eq(Vec4 v, float x, float y, float z, float w) {
+
+static inline void v4_assert_eq(Vec4 v, float x, float y, float z, float w) {
 	assert(v.x == x);
 	assert(v.y == y);
 	assert(v.z == z);

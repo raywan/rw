@@ -5,7 +5,7 @@
 
 #define EPSILON 0.00001f
 
-void v3_assert_eq(Vec3 v, float x, float y, float z) {
+static inline void v3_assert_eq(Vec3 v, float x, float y, float z) {
 	assert(v.x == x);
 	assert(v.y == y);
 	assert(v.z == z);
@@ -50,7 +50,7 @@ void run_v3_test() {
 
 	// Length
 	float length = v3_length(v);
-	assert(length == rw_sqrt(14.0f));
+	assert(length == rw_sqrt(length_squared));
 
 	// Normalize
 	Vec3 normalized = v3_normalize(v);

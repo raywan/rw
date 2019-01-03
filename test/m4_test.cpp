@@ -5,7 +5,7 @@
 
 #define EPSILON 0.00001f
 
-void m4_assert_eq(Mat4 *m, float t00, float t01, float t02, float t03,
+static inline void m4_assert_eq(Mat4 *m, float t00, float t01, float t02, float t03,
                     float t10, float t11, float t12, float t13,
                     float t20, float t21, float t22, float t23,
                     float t30, float t31, float t32, float t33)
