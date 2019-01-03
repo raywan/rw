@@ -2,7 +2,10 @@
 #define __RW_MATH_H__
 
 // UNCOMMENT (OR DEFINE) THIS LINE IF YOU WANT THIS LIBRARY TO BE HEADER ONLY
-//#define RWM_HEADER_ONLY
+// #define RWM_HEADER_ONLY
+
+// UNCOMMENT (OR DEFINE) THIS LINE IF YOU WANT TO USE THE FAST INVERSE SQRT INTRINSIc
+// #define RWM_USE_MM_RSQRT
 
 // Detect compiler type (for intrinsics)
 #if !defined(RW_DISABLE_INTRINSICS)
@@ -273,7 +276,7 @@ RWM_DEF float rw_sqrt(float val) {
 
 RWM_DEF float rw_rsqrt(float val) {
   float result;
-#if defined(RW_USE_INTRINSICS)
+#if defined(RW_USE_INTRINSICS) && defined(RWM_USE_MM_RSQRT)
   result = _mm_cvtss_f32(_mm_rsqrt_ss(_mm_set_ss(val)));
 #else
   result = 1.0f/sqrt(val);
