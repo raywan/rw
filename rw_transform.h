@@ -36,6 +36,7 @@ RWTR_DEF Transform tr_init_rotate_x(float degrees);
 RWTR_DEF Transform tr_init_rotate_y(float degrees);
 RWTR_DEF Transform tr_init_rotate_z(float degrees);
 RWTR_DEF Transform tr_init_rotate(Vec3 axis, float degrees);
+RWTR_DEF Transform tr_invert(Transform *tr);
 RWTR_DEF Transform tr_compose(Transform *tr1, Transform *tr2);
 RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms);
 RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v);
@@ -158,6 +159,19 @@ RWTR_DEF Transform tr_init_rotate(Vec3 axis, float degrees) {
 
 	result.t_inv = m4_transpose(result.t);
 
+	return result;
+}
+
+RWTR_DEF Transform tr_invert(Transform *tr) {
+	Transform result;
+	result.t = m4_identity();
+	result.t_inv = m4_identity();
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 4; j++) {
+			result.t.e[i][j] = tr->t_inv.e[i][j];
+			result.t_inv.e[i][j] = tr->t.e[i][j];
+		}
+	}
 	return result;
 }
 
