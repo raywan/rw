@@ -204,7 +204,7 @@ RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms)
 	// TODO(ray): Assert that there is greater than 1 transform
 	Transform result = *(transforms[0]);
 	for (int i = 1; i < num_transforms; i++) {
-		result.t = m4_multiply(result.t, transforms[i]->t);
+		result.t = m4_multiply(transforms[i]->t, result.t);
 		result.t_inv = m4_multiply(result.t_inv, transforms[i]->t_inv);
 	}
 	return result;
