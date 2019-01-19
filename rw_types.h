@@ -55,6 +55,10 @@ typedef union Vec4 {
 #endif
 } Vec4;
 
+typedef Vec2 Point2;
+typedef Vec3 Point3;
+typedef Vec4 Point4;
+
 typedef union Mat3 {
   // NOTE(ray): row major
   struct {
