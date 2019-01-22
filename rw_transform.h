@@ -42,6 +42,9 @@ RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms)
 RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v);
 RWTR_DEF Vec3 tr_pt3_apply(Transform *tr, Point3 p);
 RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v);
+RWTR_DEF Vec3 tr_v3_apply_inv(Transform *tr, Vec3 v);
+RWTR_DEF Vec3 tr_pt3_apply_inv(Transform *tr, Point3 p);
+RWTR_DEF Vec4 tr_v4_apply_inv(Transform *tr, Vec4 v);
 
 #ifdef __cplusplus
 }
@@ -183,6 +186,16 @@ RWTR_DEF Transform tr_compose(Transform *tr1, Transform *tr2) {
   return result;
 }
 
+RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms) {
+  // TODO(ray): Assert that there is greater than 1 transform
+  Transform result = *(transforms[0]);
+  for (int i = 1; i < num_transforms; i++) {
+    result.t = m4_multiply(transforms[i]->t, result.t);
+    result.t_inv = m4_multiply(result.t_inv, transforms[i]->t_inv);
+  }
+  return result;
+}
+
 // NOTE(ray): We make the distinction of transforming a Vector and a Point by a 4d matrix.
 // The homogenous coordinate of a Vector will have w = 0 and a Point will have w = 1.
 // This means that Vectors WILL NOT BE AFFECTED by translations.
@@ -212,13 +225,29 @@ RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v) {
   return result;
 }
 
-RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms) {
-  // TODO(ray): Assert that there is greater than 1 transform
-  Transform result = *(transforms[0]);
-  for (int i = 1; i < num_transforms; i++) {
-    result.t = m4_multiply(transforms[i]->t, result.t);
-    result.t_inv = m4_multiply(result.t_inv, transforms[i]->t_inv);
-  }
+RWTR_DEF Vec3 tr_v3_apply_inv(Transform *tr, Vec3 v) {
+  Vec3 result;
+  result.x = tr->t_inv.e[0][0]*v.x + tr->t_inv.e[0][1]*v.y + tr->t_inv.e[0][2]*v.z;
+  result.y = tr->t_inv.e[1][0]*v.x + tr->t_inv.e[1][1]*v.y + tr->t_inv.e[1][2]*v.z;
+  result.z = tr->t_inv.e[2][0]*v.x + tr->t_inv.e[2][1]*v.y + tr->t_inv.e[2][2]*v.z;
+  return result;
+}
+
+RWTR_DEF Vec3 tr_pt3_apply_inv(Transform *tr, Point3 p) {
+  Vec3 result;
+  result.x = tr->t_inv.e[0][0]*p.x + tr->t_inv.e[0][1]*p.y + tr->t_inv.e[0][2]*p.z + tr->t_inv.e[0][3];
+  result.y = tr->t_inv.e[1][0]*p.x + tr->t_inv.e[1][1]*p.y + tr->t_inv.e[1][2]*p.z + tr->t_inv.e[1][3];
+  result.z = tr->t_inv.e[2][0]*p.x + tr->t_inv.e[2][1]*p.y + tr->t_inv.e[2][2]*p.z + tr->t_inv.e[2][3];
+  return result;
+
+}
+
+RWTR_DEF Vec4 tr_v4_apply_inv(Transform *tr, Vec4 v) {
+  Vec4 result;
+  result.x = tr->t_inv.e[0][0]*v.x + tr->t_inv.e[0][1]*v.y + tr->t_inv.e[0][2]*v.z + tr->t_inv.e[0][3]*v.w;
+  result.y = tr->t_inv.e[1][0]*v.x + tr->t_inv.e[1][1]*v.y + tr->t_inv.e[1][2]*v.z + tr->t_inv.e[1][3]*v.w;
+  result.z = tr->t_inv.e[2][0]*v.x + tr->t_inv.e[2][1]*v.y + tr->t_inv.e[2][2]*v.z + tr->t_inv.e[2][3]*v.w;
+  result.w = tr->t_inv.e[3][0]*v.x + tr->t_inv.e[3][1]*v.y + tr->t_inv.e[3][2]*v.z + tr->t_inv.e[3][3]*v.w;
   return result;
 }
 
