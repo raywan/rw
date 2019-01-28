@@ -139,7 +139,9 @@ RWM_DEF Vec2 r2_offset(Rect2 r, Vec2 p); // Returns p relative to the box
 RWM_DEF Rect3 r3_init_limit();
 RWM_DEF Rect3 r3_init(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z);
 RWM_DEF Rect3 r3_init_v3(Vec3 min_p, Vec3 max_p);
+RWM_DEF Rect3 r3_init_p(Point3 p);
 RWM_DEF Rect3 r3_union(Rect3 r1, Rect3 r2);
+RWM_DEF Rect3 r3_union_p(Rect3 r1, Point3 p);
 RWM_DEF Rect3 r3_intersection(Rect3 a, Rect3 b);
 RWM_DEF bool r3_overlaps(Rect3 a, Rect3 b);
 RWM_DEF bool r3_pt_inside(Rect3 r, Vec3 p);
@@ -1177,6 +1179,14 @@ RWM_DEF Rect3 r3_init(float min_x, float min_y, float min_z, float max_x, float 
   return result;
 }
 
+RWM_DEF Rect3 r3_init_p(Vec3 p) {
+  Rect3 result = {
+    p.x, p.y, p.z,
+    p.x, p.y, p.z
+  };
+  return result;
+}
+
 RWM_DEF Rect3 r3_init_v3(Vec3 p1, Vec3 p2) {
   Rect3 result;
   result.min_px = MIN(p1.x, p2.x);
@@ -1190,12 +1200,23 @@ RWM_DEF Rect3 r3_init_v3(Vec3 p1, Vec3 p2) {
 
 RWM_DEF Rect3 r3_union(Rect3 r1, Rect3 r2) {
   Rect3 result;
-  result.min_px = MIN(r1.min_px, r1.min_px);
-  result.min_py = MIN(r1.min_py, r1.min_py);
-  result.min_pz = MIN(r1.min_pz, r1.min_pz);
-  result.max_px = MAX(r1.max_px, r1.max_px);
-  result.max_py = MAX(r1.max_py, r1.max_py);
-  result.max_pz = MAX(r1.max_pz, r1.max_pz);
+  result.min_px = MIN(r1.min_px, r2.min_px);
+  result.min_py = MIN(r1.min_py, r2.min_py);
+  result.min_pz = MIN(r1.min_pz, r2.min_pz);
+  result.max_px = MAX(r1.max_px, r2.max_px);
+  result.max_py = MAX(r1.max_py, r2.max_py);
+  result.max_pz = MAX(r1.max_pz, r2.max_pz);
+  return result;
+}
+
+RWM_DEF Rect3 r3_union_p(Rect3 r1, Point3 p) {
+  Rect3 result;
+  result.min_px = MIN(r1.min_px, p.x);
+  result.min_py = MIN(r1.min_py, p.y);
+  result.min_pz = MIN(r1.min_pz, p.z);
+  result.max_px = MAX(r1.max_px, p.x);
+  result.max_py = MAX(r1.max_py, p.y);
+  result.max_pz = MAX(r1.max_pz, p.z);
   return result;
 }
 

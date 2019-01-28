@@ -42,9 +42,11 @@ RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms)
 RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v);
 RWTR_DEF Vec3 tr_pt3_apply(Transform *tr, Point3 p);
 RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v);
+RWTR_DEF Rect3 tr_r3_apply(Transform *tr, Rect3 r);
 RWTR_DEF Vec3 tr_v3_apply_inv(Transform *tr, Vec3 v);
 RWTR_DEF Vec3 tr_pt3_apply_inv(Transform *tr, Point3 p);
 RWTR_DEF Vec4 tr_v4_apply_inv(Transform *tr, Vec4 v);
+RWTR_DEF Rect3 tr_r3_apply_inv(Transform *tr, Rect3 r);
 
 #ifdef __cplusplus
 }
@@ -225,6 +227,18 @@ RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v) {
   return result;
 }
 
+RWTR_DEF Rect3 tr_r3_apply(Transform *tr, Rect3 r) {
+  Rect3 result = r3_init_p(tr_pt3_apply(tr, r.min_p));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.min_px, r.min_py, r.max_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.min_px, r.max_py, r.min_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.min_px, r.max_py, r.max_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.max_px, r.min_py, r.min_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.max_px, r.min_py, r.max_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.max_px, r.max_py, r.min_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply(tr, v3_init(r.max_px, r.max_py, r.max_pz))));
+  return result;
+}
+
 RWTR_DEF Vec3 tr_v3_apply_inv(Transform *tr, Vec3 v) {
   Vec3 result;
   result.x = tr->t_inv.e[0][0]*v.x + tr->t_inv.e[0][1]*v.y + tr->t_inv.e[0][2]*v.z;
@@ -239,7 +253,6 @@ RWTR_DEF Vec3 tr_pt3_apply_inv(Transform *tr, Point3 p) {
   result.y = tr->t_inv.e[1][0]*p.x + tr->t_inv.e[1][1]*p.y + tr->t_inv.e[1][2]*p.z + tr->t_inv.e[1][3];
   result.z = tr->t_inv.e[2][0]*p.x + tr->t_inv.e[2][1]*p.y + tr->t_inv.e[2][2]*p.z + tr->t_inv.e[2][3];
   return result;
-
 }
 
 RWTR_DEF Vec4 tr_v4_apply_inv(Transform *tr, Vec4 v) {
@@ -248,6 +261,18 @@ RWTR_DEF Vec4 tr_v4_apply_inv(Transform *tr, Vec4 v) {
   result.y = tr->t_inv.e[1][0]*v.x + tr->t_inv.e[1][1]*v.y + tr->t_inv.e[1][2]*v.z + tr->t_inv.e[1][3]*v.w;
   result.z = tr->t_inv.e[2][0]*v.x + tr->t_inv.e[2][1]*v.y + tr->t_inv.e[2][2]*v.z + tr->t_inv.e[2][3]*v.w;
   result.w = tr->t_inv.e[3][0]*v.x + tr->t_inv.e[3][1]*v.y + tr->t_inv.e[3][2]*v.z + tr->t_inv.e[3][3]*v.w;
+  return result;
+}
+
+RWTR_DEF Rect3 tr_r3_apply_inv(Transform *tr, Rect3 r) {
+  Rect3 result = r3_init_p(tr_pt3_apply_inv(tr, r.min_p));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.min_px, r.min_py, r.max_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.min_px, r.max_py, r.min_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.min_px, r.max_py, r.max_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.max_px, r.min_py, r.min_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.max_px, r.min_py, r.max_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.max_px, r.max_py, r.min_pz))));
+  result = r3_union(result, r3_init_p(tr_pt3_apply_inv(tr, v3_init(r.max_px, r.max_py, r.max_pz))));
   return result;
 }
 
