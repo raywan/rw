@@ -40,7 +40,8 @@ RWTR_DEF Transform tr_invert(Transform *tr);
 RWTR_DEF Transform tr_compose(Transform *tr1, Transform *tr2);
 RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms);
 RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v);
-RWTR_DEF Vec3 tr_pt3_apply(Transform *tr, Point3 p);
+RWTR_DEF Point3 tr_pt3_apply(Transform *tr, Point3 p);
+RWTR_DEF Normal3 tr_n3_apply(Transform *tr, Normal3 p);
 RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v);
 RWTR_DEF Rect3 tr_r3_apply(Transform *tr, Rect3 r);
 RWTR_DEF Vec3 tr_v3_apply_inv(Transform *tr, Vec3 v);
@@ -209,13 +210,22 @@ RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v) {
   return result;
 }
 
-RWTR_DEF Vec3 tr_pt3_apply(Transform *tr, Point3 p) {
-  Vec3 result;
+RWTR_DEF Point3 tr_pt3_apply(Transform *tr, Point3 p) {
+  Point3 result;
   result.x = tr->t.e[0][0]*p.x + tr->t.e[0][1]*p.y + tr->t.e[0][2]*p.z + tr->t.e[0][3];
   result.y = tr->t.e[1][0]*p.x + tr->t.e[1][1]*p.y + tr->t.e[1][2]*p.z + tr->t.e[1][3];
   result.z = tr->t.e[2][0]*p.x + tr->t.e[2][1]*p.y + tr->t.e[2][2]*p.z + tr->t.e[2][3];
   return result;
+}
 
+// Normals must be transformed in a special way
+// We need to us the inverse transpose of the transformation
+RWTR_DEF Normal3 tr_n3_apply(Transform *tr, Normal3 p) {
+  Normal3 result;
+  result.x = tr->t_inv.e[0][0]*p.x + tr->t_inv.e[1][0]*p.y + tr->t_inv.e[2][0]*p.z;
+  result.y = tr->t_inv.e[0][1]*p.x + tr->t_inv.e[1][1]*p.y + tr->t_inv.e[2][1]*p.z;
+  result.z = tr->t_inv.e[0][2]*p.x + tr->t_inv.e[1][2]*p.y + tr->t_inv.e[2][2]*p.z;
+  return result;
 }
 
 RWTR_DEF Vec4 tr_v4_apply(Transform *tr, Vec4 v) {

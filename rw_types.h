@@ -58,6 +58,7 @@ typedef union Vec4 {
 typedef Vec2 Point2;
 typedef Vec3 Point3;
 typedef Vec4 Point4;
+typedef Vec3 Normal3;
 
 typedef union Mat3 {
   // NOTE(ray): row major
