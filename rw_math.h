@@ -199,7 +199,11 @@ RWM_DEF Vec4 &operator*=(Vec4 &v, float a);
 ///////////////////////////////////////////////////////////////////////////////
 
 #if !defined(PI)
-#define PI 3.14159265359f
+#define PI 3.14159265358979323846
+#endif
+
+#if !defined(INV_PI)
+#define INV_PI 0.31830988618379067154
 #endif
 
 #if !defined(SQUARE)
