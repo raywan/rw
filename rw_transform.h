@@ -39,6 +39,7 @@ RWTR_DEF Transform tr_init_rotate(Vec3 axis, float degrees);
 RWTR_DEF Transform tr_invert(Transform *tr);
 RWTR_DEF Transform tr_compose(Transform *tr1, Transform *tr2);
 RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms);
+RWTR_DEF Transform tr_trs(Vec3 translate, Vec3 scale, unsigned int axis, float degrees);
 RWTR_DEF Vec3 tr_v3_apply(Transform *tr, Vec3 v);
 RWTR_DEF Point3 tr_pt3_apply(Transform *tr, Point3 p);
 RWTR_DEF Normal3 tr_n3_apply(Transform *tr, Normal3 p);
@@ -196,6 +197,26 @@ RWTR_DEF Transform tr_compose_n(Transform **transforms, unsigned num_transforms)
     result.t = m4_multiply(transforms[i]->t, result.t);
     result.t_inv = m4_multiply(result.t_inv, transforms[i]->t_inv);
   }
+  return result;
+}
+
+RWTR_DEF Transform tr_trs(Vec3 translate, Vec3 scale, unsigned int axis, float degrees) {
+  Transform t_tr = tr_init_translate(translate.x, translate.y, translate.z);
+  Transform s_tr = tr_init_scale(scale.x, scale.y, scale.z);
+  Transform r_tr;
+  switch (axis) {
+    case 0:
+      r_tr = tr_init_rotate_x(degrees);
+      break;
+    case 1:
+      r_tr = tr_init_rotate_y(degrees);
+      break;
+    case 2:
+      r_tr = tr_init_rotate_z(degrees);
+      break;
+  }
+  Transform *compose_list[3] = {&s_tr, &r_tr, &t_tr};
+  Transform result = tr_compose_n(compose_list, 3);
   return result;
 }
 
