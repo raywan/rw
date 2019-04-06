@@ -31,11 +31,14 @@
 // __CORE
 ///////////////////////////////////////////////////////////////////////////////
 
+
+#if defined(RWTYPES_STATIC_REDEF)
 #if !defined(internal)
-#define internal static
+  #define internal static
 #endif
-#define local_persist static
-#define global static
+  #define static internal
+  #define global static
+#endif // #if defined(RWTYPES_STATIC_REDEF)
 
 typedef int8_t int8;
 typedef int16_t int16;
