@@ -1,23 +1,20 @@
 # rw
 
-This repo contains a collection of libraries that I have found useful for my 
-game development and graphics projects. I found myself writting common code 
+This repo contains a collection of code/utilties/libraries that I have found
+or found usefulneed  for my game development and graphics projects. I found myself writing common code
 across all these projects so I decided to clean up and factor out the code into
-a single repo which all current (and future) projects can use.
+a single repo which all current (and future) projects can use. This repo will also
+continue to grow along with me.
 
-The design of these libraries and choices of which functions to implement 
-are influenced by stb, Handmade Hero, and raylib. Although I have taken influence
-from these three sources, I have designed and coded my libraries to suit my needs
+The design of these libraries and choices of which functions to implement
+are influenced by many great libraries I have seen and used (see
+[Inspirations](#inspirations)). Although I have taken influence from these sources,
+I have designed and coded my libraries to suit my needs
 and my tastes.
 
-## Inspiration
+## Inspirations
 
-https://github.com/nothings/stb
-The holy grail of single-file libraries.
-
-https://github.com/raysan5/raylib 
-The most sane and easy to use game engines I have used.
-
-
-Handmade Hero
-
+- Handmade Hero
+- [nothings/stb](https://github.com/nothings/stb)
+- [raysan5/raylib](https://github.com/raysan5/raylib)
+- [koekeishiya/chunkwm](https://github.com/koekeishiya/chunkwm)
