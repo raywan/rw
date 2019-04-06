@@ -1,3 +1,17 @@
+/*
+  FILE: rw_type.h
+  VERSION: 0.1.0
+  DESCRIPTION: Define or redefines common types.
+  AUTHOR: Raymond Wan
+  USAGE: Just include this file
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __CORE
+    2. __DEF
+*/
+
 #ifndef __RW_TYPES_H__
 #define __RW_TYPES_H__
 
@@ -12,6 +26,16 @@
 #include <intrin.h>
 #endif
 #endif // #if !defined(RW_DISABLE_INTRINSICS)
+
+///////////////////////////////////////////////////////////////////////////////
+// __CORE
+///////////////////////////////////////////////////////////////////////////////
+
+#if !defined(internal)
+#define internal static
+#endif
+#define local_persist static
+#define global static
 
 typedef int8_t int8;
 typedef int16_t int16;
@@ -29,9 +53,17 @@ typedef double real64;
 typedef intptr_t intptr;
 typedef uintptr_t uintptr;
 
+
 ///////////////////////////////////////////////////////////////////////////////
 // __DEF
 ///////////////////////////////////////////////////////////////////////////////
+
+// NOTE(ray): I don't remember why I moved the math types into here.
+// I should probably be able to move them back into rw_math.h
+// Is there ever a case where I need the types and not the corresponding functions?
+
+// NOTE(ray): Be able to only include "core" types
+#if !defined(RWTYPES_CORE_ONLY)
 
 typedef union Vec2 {
   struct { float x, y; };
@@ -103,7 +135,7 @@ typedef union Rect2 {
     float min_px, min_py;
     float max_px, max_py;
   };
-  // idx 0 is the min point, and idx 1 is the max point
+  // NOTE(ray): idx 0 is the min point, and idx 1 is the max point
   Vec3 p[2];
 } Rect2;
 
@@ -116,8 +148,10 @@ typedef union Rect3 {
     float min_px, min_py, min_pz;
     float max_px, max_py, max_pz;
   };
-  // idx 0 is the min point, and idx 1 is the max point
+  // NOTE(ray): idx 0 is the min point, and idx 1 is the max point
   Vec3 p[2];
 } Rect3;
 
-#endif
+#endif // #if !defined(RWTYPES_CORE_ONLY)
+
+#endif // #ifndef __RW_TYPES_H__

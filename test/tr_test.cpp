@@ -6,20 +6,20 @@
 
 #define EPSILON 0.00001f
 
-static inline void v3_assert_eq(Vec3 *v, float x, float y, float z) {
+static inline void rwm_v3_assert_eq(Vec3 *v, float x, float y, float z) {
 	assert(v->x == x);
 	assert(v->y == y);
 	assert(v->z == z);
 }
 
-static inline void v4_assert_eq(Vec4 *v, float x, float y, float z, float w) {
+static inline void rwm_v4_assert_eq(Vec4 *v, float x, float y, float z, float w) {
 	assert(v->x == x);
 	assert(v->y == y);
 	assert(v->z == z);
 	assert(v->w == w);
 }
 
-static inline void m4_assert_eq(Mat4 *m, float t00, float t01, float t02, float t03,
+static inline void rwm_m4_assert_eq(Mat4 *m, float t00, float t01, float t02, float t03,
                     float t10, float t11, float t12, float t13,
                     float t20, float t21, float t22, float t23,
                     float t30, float t31, float t32, float t33)
@@ -42,24 +42,24 @@ static inline void m4_assert_eq(Mat4 *m, float t00, float t01, float t02, float 
   assert(m->e[3][3] == t33);
 }
 
-void run_tr_test() {
-	printf("run_tr_test");
+void run_rwtr_test() {
+	printf("run_rwtr_test");
 
-	Vec3 v3 = v3_init(1.0f, 2.0f, 3.0f);
-	Vec4 v4 = v4_init(1.0f, 2.0f, 3.0f, 4.0f);
+	Vec3 v3 = rwm_v3_init(1.0f, 2.0f, 3.0f);
+	Vec4 v4 = rwm_v4_init(1.0f, 2.0f, 3.0f, 4.0f);
 
 	// Init using matrix
-  Mat4 m = m4_diagonal(2.0f);
+  Mat4 m = rwm_m4_diagonal(2.0f);
 	m.e[3][3] = 1.0f;
-	Transform tr = tr_init_m4(&m);
-	m4_assert_eq(&tr.t,
+	Transform tr = rwtr_init_m4(&m);
+	rwm_m4_assert_eq(&tr.t,
 		2.0f, 0.0f, 0.0f, 0.0f,
 		0.0f, 2.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 2.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-	m4_assert_eq(&tr.t_inv,
+	rwm_m4_assert_eq(&tr.t_inv,
 		0.5f, 0.0f, 0.0f, 0.0f,
 		0.0f, 0.5f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.5f, 0.0f,
@@ -67,19 +67,21 @@ void run_tr_test() {
 	);
 
 	// Scaling
-	Transform scale_tr = tr_init_scale(2.0f, 2.0f, 2.0f);
-	Vec3 scaled_v3 = tr_v3_apply(&scale_tr, v3);
-	v3_assert_eq(&scaled_v3, 2.0f, 4.0f, 6.0f);
-	Vec4 scaled_v4 = tr_v4_apply(&scale_tr, v4);
-	v4_assert_eq(&scaled_v4, 2.0f, 4.0f, 6.0f, 4.0f);
+	Transform scale_tr = rwtr_init_scale(2.0f, 2.0f, 2.0f);
+	Vec3 scaled_v3 = rwtr_v3_apply(&scale_tr, v3);
+	rwm_v3_assert_eq(&scaled_v3, 2.0f, 4.0f, 6.0f);
+	Vec4 scaled_v4 = rwtr_v4_apply(&scale_tr, v4);
+	rwm_v4_assert_eq(&scaled_v4, 2.0f, 4.0f, 6.0f, 4.0f);
 
 	// Translate
-	Transform translate_tr = tr_init_translate(2.0f, 2.0f, 2.0f);
-	Vec3 translated_v3 = tr_v3_apply(&translate_tr, v3);
-	v3_assert_eq(&translated_v3, 3.0f, 4.0f, 5.0f);
+	Transform translate_tr = rwtr_init_translate(2.0f, 2.0f, 2.0f);
+	Vec3 translated_v3 = rwtr_v3_apply(&translate_tr, v3);
+	rwm_v3_assert_eq(&translated_v3, v3.x, v3.y, v3.z);
+	translated_v3 = rwtr_pt3_apply(&translate_tr, v3);
+	rwm_v3_assert_eq(&translated_v3, 3.0f, 4.0f, 5.0f);
 
-	Vec4 translated_v4 = tr_v4_apply(&translate_tr, v4);
-	v4_assert_eq(&translated_v4, 9.0f, 10.0f, 11.0f, 4.0f);
+	Vec4 translated_v4 = rwtr_v4_apply(&translate_tr, v4);
+	rwm_v4_assert_eq(&translated_v4, 9.0f, 10.0f, 11.0f, 4.0f);
 
 	puts(" - PASSED");
 }

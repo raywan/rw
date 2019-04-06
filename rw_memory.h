@@ -1,3 +1,21 @@
+/*
+  FILE: rw_memory.h
+  VERSION: 0.1.0
+  DESCRIPTION: Custom memory allocation.
+  AUTHOR: Raymond Wan
+  USAGE: Simply including the file will only give you declarations (see __API)
+    To include the implementation,
+      #define RWMEM_IMPLEMENTATION
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __TYPES
+    2. __API
+    3. __MACROS
+    4. __IMPLEMENTATION
+*/
+
 #ifndef __RW_MEMORY_H__
 #define __RW_MEMORY_H__
 
@@ -17,12 +35,13 @@
 extern "C" {
 #endif
 
-RWMEM_DEF void *rw_aligned_malloc(size_t size, size_t alignment);
-RWMEM_DEF void rw_afree(void *p);
+RWMEM_DEF void *rwmem_aligned_malloc(size_t size, size_t alignment);
+RWMEM_DEF void rwmem_afree(void *p);
 
 #ifdef __cplusplus
 }
 #endif
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // __MACROS
@@ -34,6 +53,7 @@ RWMEM_DEF void rw_afree(void *p);
 #define ALIGN16(size) ALIGN_X(size, 16)
 #define IS_ALIGNED(p, alignment) \
 	((((unsigned long) (const void *) p) % alignment) == 0)
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // __IMPLEMENTATION
@@ -54,7 +74,7 @@ RWMEM_DEF void rw_afree(void *p);
 
 // Aligned memory allocation to the heap
 // alignment must be a power of 2 and multiple of sizeof(void *)
-RWMEM_DEF void *rw_aligned_malloc(size_t size, size_t alignment) {
+RWMEM_DEF void *rwmem_aligned_malloc(size_t size, size_t alignment) {
 	void *result;
 #if defined(RWMEM_POSIX_MEMALIGN_AVAILABLE)
 	posix_memalign(&result, alignment, size);
@@ -66,7 +86,7 @@ RWMEM_DEF void *rw_aligned_malloc(size_t size, size_t alignment) {
 	return result;
 }
 
-RWMEM_DEF void rw_free(void *p) {
+RWMEM_DEF void rwmem_free(void *p) {
 	if (p == NULL) return;
 #if defined(ALIGNED_MALLOC_AVAILABLE)
 	_aligned_free(p);
@@ -81,6 +101,6 @@ typedef struct MemoryArena {
 	size_t cur_alloc_size;
 } MemoryArena;
 
-#endif
+#endif // #if defined(RWMEM_IMPLEMENTATION) || defined(RWMEM_HEADER_ONLY)
 
-#endif
+#endif // #ifndef __RW_MEMORY_H__
