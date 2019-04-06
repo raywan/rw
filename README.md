@@ -1,7 +1,7 @@
 # rw
 
 This repo contains a collection of code/utilties/libraries that I have found
-or found usefulneed  for my game development and graphics projects. I found myself writing common code
+or found useful for my game development and graphics projects. I found myself writing common code
 across all these projects so I decided to clean up and factor out the code into
 a single repo which all current (and future) projects can use. This repo will also
 continue to grow along with me.
@@ -9,8 +9,18 @@ continue to grow along with me.
 The design of these libraries and choices of which functions to implement
 are influenced by many great libraries I have seen and used (see
 [Inspirations](#inspirations)). Although I have taken influence from these sources,
-I have designed and coded my libraries to suit my needs
-and my tastes.
+I have designed and coded my libraries to suit my needs and my tastes.
+
+## Contents
+
+| File           | Version | Description                                          |
+|----------------|---------|------------------------------------------------------|
+| rw_types.h     | 0.2.0   | Defines or redefines common types                    |
+| rw_math.h      | 0.2.0   | Generic math library                                 |
+| rw_transform.h | 0.2.0   | Matrix transformation data structure and functions   |
+| rw_time.h      | 0.1.0   | High resolution timer                                |
+| rw_memory.h    | 0.1.0   | Custom memory allocation                             |
+
 
 ## Inspirations
 

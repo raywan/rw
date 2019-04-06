@@ -1,3 +1,21 @@
+/*
+  FILE: rw_memory.h
+  VERSION: 0.1.0
+  DESCRIPTION: Custom memory allocation.
+  AUTHOR: Raymond Wan
+  USAGE: Simply including the file will only give you declarations (see __API)
+    To include the implementation,
+      #define RWMEM_IMPLEMENTATION
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __TYPES
+    2. __API
+    3. __MACROS
+    4. __IMPLEMENTATION
+*/
+
 #ifndef __RW_MEMORY_H__
 #define __RW_MEMORY_H__
 
@@ -23,6 +41,7 @@ RWMEM_DEF void rwmem_afree(void *p);
 #ifdef __cplusplus
 }
 #endif
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // __MACROS

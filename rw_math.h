@@ -1,11 +1,35 @@
+/*
+  FILE: rw_math.h
+  VERSION: 0.5.0
+  DESCRIPTION: Generic math library.
+  AUTHOR: Raymond Wan
+  USAGE: Simply including the file will only give you declarations (see __API)
+    To include the implementation,
+      #define RWM_IMPLEMENTATION
+    OR if you want this to be header only,
+      #define RWM_HEADER_ONLY
+    To use the fast inverse sqrt intrinsic, also include before
+      #define RWM_USE_MM_RSQRT
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __MACROS
+    2. __TYPES
+    3. __API
+    4. __IMPLEMENTATION
+  SUBSECTIONS:
+    1. __VEC2
+    2. __VEC3
+    3. __VEC4
+    4. __MAT4
+    5. __QUATERNION
+    6. __RECT2
+    7. __RECT3
+*/
+
 #ifndef __RW_MATH_H__
 #define __RW_MATH_H__
-
-// UNCOMMENT (OR DEFINE) THIS LINE IF YOU WANT THIS LIBRARY TO BE HEADER ONLY
-// #define RWM_HEADER_ONLY
-
-// UNCOMMENT (OR DEFINE) THIS LINE IF YOU WANT TO USE THE FAST INVERSE SQRT INTRINSIc
-// #define RWM_USE_MM_RSQRT
 
 // Detect compiler type (for intrinsics)
 #if !defined(RW_DISABLE_INTRINSICS)
@@ -55,7 +79,7 @@ RWM_DEF float rwm_to_degrees(float radians);
 RWM_DEF float rwm_sqrt(float val);
 RWM_DEF float rwm_rsqrt(float val);
 
-// __Vec2
+// __VEC2
 RWM_DEF void rwm_v2_puts(Vec2 *v);
 RWM_DEF void rwm_v2_printf(const char *label, Vec2 *v);
 RWM_DEF Vec2 rwm_v2_init(float x, float y);
@@ -71,7 +95,7 @@ RWM_DEF Vec2 rwm_v2_hadamard(Vec2 a, Vec2 b);
 RWM_DEF float rwm_v2_inner(Vec2 a, Vec2 b);
 RWM_DEF Vec2 rwm_v2_lerp(Vec2 a, float t, Vec2 b);
 
-// __Vec3
+// __VEC3
 RWM_DEF void rwm_v3_puts(Vec3 *v);
 RWM_DEF void rwm_v3_printf(const char *label, Vec3 *v);
 RWM_DEF Vec3 rwm_v3_init(float x, float y, float z);
@@ -88,7 +112,7 @@ RWM_DEF float rwm_v3_inner(Vec3 a, Vec3 b);
 RWM_DEF Vec3 rwm_v3_cross(Vec3 a, Vec3 b);
 RWM_DEF Vec3 rwm_v3_lerp(Vec3 a, float t, Vec3 b);
 
-// __Vec4
+// __VEC4
 RWM_DEF void rwm_v4_puts(Vec4 *v);
 RWM_DEF void rwm_v4_printf(const char *label, Vec4 *v);
 RWM_DEF Vec4 rwm_v4_init(float x, float y, float z, float w);
@@ -104,7 +128,7 @@ RWM_DEF Vec4 rwm_v4_hadamard(Vec4 a, Vec4 b);
 RWM_DEF float rwm_v4_inner(Vec4 a, Vec4 b);
 RWM_DEF Vec4 rwm_v4_lerp(Vec4 a, float t, Vec4 b);
 
-// __Mat4
+// __MAT4
 RWM_DEF void rwm_m4_puts(Mat4 *m);
 RWM_DEF Mat4 rwm_m4_diagonal(float a);
 RWM_DEF Mat4 rwm_m4_identity();
@@ -162,7 +186,7 @@ RWM_DEF Vec3 rwm_r3_offset(Rect3 r, Vec3 p); // Returns p relative to the box
 #endif
 
 #ifdef __cplusplus
-// __Vec2_op
+// __VEC2_op
 RWM_DEF Vec2 operator+(Vec2 a, Vec2 b);
 RWM_DEF Vec2 &operator+=(Vec2 &a, Vec2 b);
 RWM_DEF Vec2 operator-(Vec2 a);
@@ -173,7 +197,7 @@ RWM_DEF Vec2 operator*(Vec2 v, float a);
 RWM_DEF Vec2 operator*(Vec2 a, Vec2 b);
 RWM_DEF Vec2 &operator*=(Vec2 &v, float a);
 
-// __Vec3_op
+// __VEC3_op
 RWM_DEF Vec3 operator+(Vec3 a, Vec3 b);
 RWM_DEF Vec3 &operator+=(Vec3 &a, Vec3 b);
 RWM_DEF Vec3 operator-(Vec3 a);
@@ -184,7 +208,7 @@ RWM_DEF Vec3 operator*(Vec3 v, float a);
 RWM_DEF Vec3 operator*(Vec3 a, Vec3 b);
 RWM_DEF Vec3 &operator*=(Vec3 &v, float a);
 
-// __Vec3_op
+// __VEC3_op
 RWM_DEF Vec4 operator+(Vec4 a, Vec4 b);
 RWM_DEF Vec4 &operator+=(Vec4 &a, Vec4 b);
 RWM_DEF Vec4 operator-(Vec4 a);
@@ -305,7 +329,7 @@ RWM_DEF float rwm_rsqrt(float val) {
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// __Vec2
+// __VEC2
 ///////////////////////////////////////////////////////////////////////////////
 
 RWM_DEF void rwm_v2_puts(Vec2 *v) {
@@ -389,7 +413,7 @@ RWM_DEF Vec2 rwm_v2_lerp(Vec2 a, float t, Vec2 b) {
   return result;
 }
 
-// __Vec2_op
+// __VEC2_op
 #ifdef __cplusplus
 RWM_DEF Vec2 operator+(Vec2 a, Vec2 b) {
   Vec2 result;
@@ -453,7 +477,7 @@ RWM_DEF Vec2 &operator*=(Vec2 &v, float a) {
 #endif // #ifndef __cplusplus for Vec2
 
 ///////////////////////////////////////////////////////////////////////////////
-// __Vec3
+// __VEC3
 ///////////////////////////////////////////////////////////////////////////////
 
 RWM_DEF void rwm_v3_puts(Vec3 *v) {
@@ -559,7 +583,7 @@ RWM_DEF Vec3 rwm_v3_lerp(Vec3 a, float t, Vec3 b) {
   return result;
 }
 
-// __Vec3_op
+// __VEC3_op
 #ifdef __cplusplus
 RWM_DEF Vec3 operator+(Vec3 a, Vec3 b) {
   Vec3 result;
@@ -631,7 +655,7 @@ RWM_DEF Vec3 &operator*=(Vec3 &v, float a) {
 #endif // #ifdef __cplusplus for Vec3
 
 ///////////////////////////////////////////////////////////////////////////////
-// __Vec4
+// __VEC4
 ///////////////////////////////////////////////////////////////////////////////
 
 RWM_DEF void rwm_v4_puts(Vec4 *v) {
@@ -765,7 +789,7 @@ RWM_DEF Vec4 rwm_v4_lerp(Vec4 a, float t, Vec4 b) {
   return result;
 }
 
-// __Vec4_op
+// __VEC4_op
 #ifdef __cplusplus
 RWM_DEF Vec4 operator+(Vec4 a, Vec4 b) {
   Vec4 result = rwm_v4_add(a, b);
@@ -828,7 +852,7 @@ RWM_DEF Vec4 &operator*=(Vec4 &v, float a) {
 #endif // #ifdef __cplusplus for Vec4
 
 ///////////////////////////////////////////////////////////////////////////////
-// __Mat4
+// __MAT4
 ///////////////////////////////////////////////////////////////////////////////
 
 RWM_DEF void rwm_m4_puts(Mat4 *m) {
@@ -925,12 +949,12 @@ RWM_DEF Mat4 rwm_m4_transpose(Mat4 m) {
   }
   _MM_TRANSPOSE4_PS(result.row[0], result.row[1], result.row[2], result.row[3]);
 #else
-#endif
   for (int i = 0; i < 4; i++) {
     for (int j = 0; j < 4; j++) {
       result.e[i][j] = m.e[j][i];
     }
   }
+#endif
   return result;
 }
 
@@ -940,6 +964,7 @@ RWM_DEF float rwm_m4_trace(Mat4 m) {
 }
 
 RWM_DEF Mat4 rwm_m4_add(Mat4 a, Mat4 b) {
+  // TODO(ray): Add intrinsic version
   Mat4 result = { 0.0f };
   result.e00 = a.e00 + b.e00;
   result.e01 = a.e01 + b.e01;
@@ -962,6 +987,7 @@ RWM_DEF Mat4 rwm_m4_add(Mat4 a, Mat4 b) {
 }
 
 RWM_DEF Mat4 rwm_m4_subtract(Mat4 a, Mat4 b) {
+  // TODO(ray): Add intrinsic version
   Mat4 result = { 0.0f };
   result.e00 = a.e00 - b.e00;
   result.e01 = a.e01 - b.e01;
@@ -984,6 +1010,7 @@ RWM_DEF Mat4 rwm_m4_subtract(Mat4 a, Mat4 b) {
 }
 
 RWM_DEF Mat4 rwm_m4_scalar_mult(float a, Mat4 m) {
+  // TODO(ray): Add intrinsic version
   Mat4 result = { 0.0f };
   result.e00 = a * m.e00;
   result.e01 = a * m.e01;
@@ -1005,6 +1032,7 @@ RWM_DEF Mat4 rwm_m4_scalar_mult(float a, Mat4 m) {
 }
 
 RWM_DEF Mat4 rwm_m4_multiply(Mat4 a, Mat4 b) {
+  // TODO(ray): Add intrinsic version
   Mat4 result = { 0.0f };
 
   result.e00 = (a.e00 * b.e00) + (a.e01 * b.e10) + (a.e02 * b.e20) + (a.e03 * b.e30);
@@ -1155,7 +1183,7 @@ RWM_DEF Quaternion rwm_q_normalize(Quaternion q) {
 }
 
 #ifdef __cplusplus
-// Quaternion operator overloading here
+// TODO(ray): Quaternion operator overloading here
 #endif // #ifdef __cplusplus for quaternion
 
 ///////////////////////////////////////////////////////////////////////////////

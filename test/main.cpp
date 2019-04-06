@@ -22,11 +22,6 @@ int main() {
   run_rwm_m4_test();
   run_rwtr_test();
 
-  int *arr = (int *) malloc(1);
-  for (int i = 0; i < 1; i++) {
-    arr[i] = 1;
-  }
-
   char *p = (char *) rwmem_aligned_malloc(19, 8);
   assert(IS_ALIGNED(p, 8));
   printf("%p\n", p);

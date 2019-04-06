@@ -1,3 +1,22 @@
+/*
+  FILE: rw_transform.h
+  VERSION: 0.1.0
+  DESCRIPTION: Matrix transformation data structure and functions.
+  AUTHOR: Raymond Wan
+  DEPENDENCIES: rw_math.h
+  USAGE: Simply including the file will only give you declarations (see __API)
+    To include the implementation,
+      #define RWTR_IMPLEMENTATION
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __TYPES
+    2. __API
+    3. __MACROS
+    4. __IMPLEMENTATION
+*/
+
 #ifndef __RW_TRANSFORM_H__
 #define __RW_TRANSFORM_H__
 

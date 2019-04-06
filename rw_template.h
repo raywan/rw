@@ -2,7 +2,24 @@
 // NOTE(ray): Template file to create other libraries.
 //            Global replace MYLIB with the library name e.g. MATH.
 //            Global replace RWNAMESPACE with the namespace e.g. RWM.
+//            Edit file header.
 ///////////////////////////////////////////////////////////////////////////////
+
+/*
+  FILE: rw_MYLIBFILENAME.h
+  VERSION: 0.1.0
+  DESCRIPTION: My awesome description.
+  AUTHOR: Raymond Wan
+  USAGE: Very clear usage instructions.
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __TYPES
+    2. __API
+    3. __MACROS
+    4. __IMPLEMENTATION
+*/
 
 #ifndef __RW_MYLIB_H__
 #define __RW_MYLIB_H__

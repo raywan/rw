@@ -1,3 +1,17 @@
+/*
+  FILE: rw_type.h
+  VERSION: 0.1.0
+  DESCRIPTION: Define or redefines common types.
+  AUTHOR: Raymond Wan
+  USAGE: Just include this file
+
+  NOTE(ray): To quickly navigate through the file,
+             sections and/or subsections are available to jump to.
+  SECTIONS:
+    1. __CORE
+    2. __DEF
+*/
+
 #ifndef __RW_TYPES_H__
 #define __RW_TYPES_H__
 
@@ -13,10 +27,15 @@
 #endif
 #endif // #if !defined(RW_DISABLE_INTRINSICS)
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // __CORE
 ///////////////////////////////////////////////////////////////////////////////
+
+#if !defined(internal)
+#define internal static
+#endif
+#define local_persist static
+#define global static
 
 typedef int8_t int8;
 typedef int16_t int16;
