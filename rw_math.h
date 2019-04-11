@@ -1,6 +1,6 @@
 /*
   FILE: rw_math.h
-  VERSION: 0.5.0
+  VERSION: 0.2.0
   DESCRIPTION: Math library for games/graphics.
   AUTHOR: Raymond Wan
   USAGE: Simply including the file will only give you declarations (see __API)
@@ -18,14 +18,13 @@
     2. __TYPES
     3. __API
     4. __IMPLEMENTATION
-  SUBSECTIONS:
-    1. __VEC2
-    2. __VEC3
-    3. __VEC4
-    4. __MAT4
-    5. __QUATERNION
-    6. __RECT2
-    7. __RECT3
+      4.1. __VEC2
+      4.2. __VEC3
+      4.3. __VEC4
+      4.4. __MAT4
+      4.5. __QUATERNION
+      4.6. __RECT2
+      4.7. __RECT3
 */
 
 #ifndef __RW_MATH_H__

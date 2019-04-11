@@ -19,29 +19,6 @@ static inline void rwm_v4_assert_eq(Vec4 *v, float x, float y, float z, float w)
 	assert(v->w == w);
 }
 
-static inline void rwm_m4_assert_eq(Mat4 *m, float t00, float t01, float t02, float t03,
-                    float t10, float t11, float t12, float t13,
-                    float t20, float t21, float t22, float t23,
-                    float t30, float t31, float t32, float t33)
-{
-  assert(m->e[0][0] == t00);
-  assert(m->e[0][1] == t01);
-  assert(m->e[0][2] == t02);
-  assert(m->e[0][3] == t03);
-  assert(m->e[1][0] == t10);
-  assert(m->e[1][1] == t11);
-  assert(m->e[1][2] == t12);
-  assert(m->e[1][3] == t13);
-  assert(m->e[2][0] == t20);
-  assert(m->e[2][1] == t21);
-  assert(m->e[2][2] == t22);
-  assert(m->e[2][3] == t23);
-  assert(m->e[3][0] == t30);
-  assert(m->e[3][1] == t31);
-  assert(m->e[3][2] == t32);
-  assert(m->e[3][3] == t33);
-}
-
 void run_rwtr_test() {
 	printf("run_rwtr_test");
 

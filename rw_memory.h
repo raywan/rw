@@ -28,6 +28,16 @@
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
+// __TYPES
+///////////////////////////////////////////////////////////////////////////////
+
+typedef struct MemoryArena {
+	size_t block_size_bytes;
+	size_t cur_block_pos;
+	size_t cur_alloc_size;
+} MemoryArena;
+
+///////////////////////////////////////////////////////////////////////////////
 // __API
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -36,7 +46,7 @@ extern "C" {
 #endif
 
 RWMEM_DEF void *rwmem_aligned_malloc(size_t size, size_t alignment);
-RWMEM_DEF void rwmem_afree(void *p);
+RWMEM_DEF void rwmem_free(void *p);
 
 #ifdef __cplusplus
 }
@@ -94,12 +104,6 @@ RWMEM_DEF void rwmem_free(void *p) {
 	free(p);
 #endif
 }
-
-typedef struct MemoryArena {
-	size_t block_size_bytes;
-	size_t cur_block_pos;
-	size_t cur_alloc_size;
-} MemoryArena;
 
 #endif // #if defined(RWMEM_IMPLEMENTATION) || defined(RWMEM_HEADER_ONLY)
 

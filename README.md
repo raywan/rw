@@ -19,13 +19,13 @@ I have designed and coded my libraries to suit my needs and my tastes.
 
 ## Files
 
-| File           | Version | Description                                          |
-|----------------|---------|------------------------------------------------------|
-| rw_types.h     | 0.2.0   | Defines or redefines common types                    |
-| rw_math.h      | 0.2.0   | Math library for games/graphics                      |
-| rw_transform.h | 0.2.0   | Matrix transformation data structure and functions   |
-| rw_time.h      | 0.1.0   | High resolution timer                                |
-| rw_memory.h    | 0.1.0   | Custom memory allocation                             |
+| File           | Version | Description                                                        |
+|----------------|---------|--------------------------------------------------------------------|
+| rw_types.h     | 0.2.0   | Defines or redefines common types                                  |
+| rw_math.h      | 0.2.0   | Math library for games/graphics                                    |
+| rw_transform.h | 0.2.0   | Matrix transformation data structure and functions (pbrt inspired) |
+| rw_time.h      | 0.2.0   | High resolution timer (nanoseconds) and other related utilities    |
+| rw_memory.h    | 0.1.0   | Custom memory allocation                                           |
 
 ## General Usage Instructions
 
@@ -60,9 +60,16 @@ For example (in `rw_math.h`),
 #define RWM_USE_MM_RSQRT
 ```
 
+## TODO
+
+rw_mesh.h - Migrate OBJ loader/mesh code from other projects here
+rw_buffer.h - Dynamic buffers, ring buffers etc.
+rw_sort.h - Various sorting algorithms
+rw_hashtable.h - Hashtable
+
 ## Inspirations
 
-- Handmade Hero
+- [Handmade Hero](https://handmadehero.org/)
 - [nothings/stb](https://github.com/nothings/stb)
 - [raysan5/raylib](https://github.com/raysan5/raylib)
 - [koekeishiya/chunkwm](https://github.com/koekeishiya/chunkwm)

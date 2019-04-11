@@ -1,6 +1,7 @@
 O_LEVEL := 0
-SRC_FILES := main.cpp v2_test.cpp v3_test.cpp v4_test.cpp m4_test.cpp tr_test.cpp
+SRC_FILES := main.cpp
 
+.PHONY: run_rw_test
 run_rw_test: $(SRC_FILES)
 	time g++ -std=c++11 -O$(O_LEVEL) $(SRC_FILES) -o $@
 
