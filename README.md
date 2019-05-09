@@ -26,6 +26,7 @@ I have designed and coded my libraries to suit my needs and my tastes.
 | rw_transform.h | 0.2.0   | Matrix transformation data structure and functions (pbrt inspired) |
 | rw_time.h      | 0.2.0   | High resolution timer (nanoseconds) and other related utilities    |
 | rw_memory.h    | 0.1.0   | Custom memory allocation                                           |
+| rw_th.h        | 0.1.0   | Multithreading related functions                                   |
 
 ## General Usage Instructions
 

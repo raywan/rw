@@ -17,6 +17,10 @@
 #define RWTM_IMPLEMENTATION
 #include "../rw_time.h"
 
+#define RWTH_IMPLEMENTATION
+#include "../rw_th.h"
+#include "th_test.cpp"
+
 using namespace std;
 
 int main() {
@@ -25,6 +29,7 @@ int main() {
   run_rwm_v4_test();
   run_rwm_m4_test();
   run_rwtr_test();
+  run_th_test();
 
   char *p = (char *) rwmem_aligned_malloc(19, 8);
   assert(IS_ALIGNED(p, 8));
@@ -40,4 +45,5 @@ int main() {
   double now = rwtm_now();
   sleep(5);
   printf("time: %f\n", rwtm_to_sec(rwtm_since(now)));
+
 }
