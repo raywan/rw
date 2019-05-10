@@ -150,8 +150,10 @@ RWM_DEF float rwm_q_length(Quaternion q);
 
 // __RECT2
 RWM_DEF Rect2 rwm_r2_init_limit();
-RWM_DEF Rect2 rwm_r2_init(float min_x, float min_y, float max_x, float max_y);
-RWM_DEF Rect2 rwm_r2_init_v2(Vec2 min_p, Vec2 max_p);
+RWM_DEF Rect2 rwm_r2_init(float x1, float y1, float x2, float y2);
+RWM_DEF Rect2 rwm_r2_init_v2(Vec2 p1, Vec2 p2);
+RWM_DEF Rect2 rwm_r2_union(Rect2 r1, Rect2 r2);
+RWM_DEF Rect2 rwm_r2_union_p(Rect2 r1, Point2 p);
 RWM_DEF Rect2 rwm_r2_intersection(Rect2 a, Rect2 b);
 RWM_DEF bool rwm_r2_overlaps(Rect2 a, Rect2 b);
 RWM_DEF bool rwm_r2_pt_inside(Rect2 r, Vec2 p);
@@ -164,7 +166,7 @@ RWM_DEF Vec2 rwm_r2_offset(Rect2 r, Vec2 p); // Returns p relative to the box
 
 // __RECT3
 RWM_DEF Rect3 rwm_r3_init_limit();
-RWM_DEF Rect3 rwm_r3_init(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z);
+RWM_DEF Rect3 rwm_r3_init(float x1, float y1, float z1, float x2, float y2, float z2);
 RWM_DEF Rect3 rwm_r3_init_v3(Vec3 min_p, Vec3 max_p);
 RWM_DEF Rect3 rwm_r3_init_p(Point3 p);
 RWM_DEF Rect3 rwm_r3_union(Rect3 r1, Rect3 r2);
@@ -1189,18 +1191,89 @@ RWM_DEF Quaternion rwm_q_normalize(Quaternion q) {
 // __RECT2
 ///////////////////////////////////////////////////////////////////////////////
 
-// TODO(ray): Define later
-//RWM_DEF Rect2 rwm_r2_init_limit();
-//RWM_DEF Rect2 rwm_r2_init(float min_x, float min_y, float max_x, float max_y);
-//RWM_DEF Rect2 rwm_r2_init_v2(Vec2 min_p, Vec2 max_p);
-//RWM_DEF Rect2 rwm_r2_intersection(Rect2 a, Rect2 b);
-//RWM_DEF bool rwm_r2_overlaps(Rect2 a, Rect2 b);
-//RWM_DEF bool rwm_r2_pt_inside(Rect2 r, Vec2 p);
-//RWM_DEF bool rwm_r2_pt_inside_excl(Rect2 r, Vec2 p);
-//RWM_DEF Rect2 rwm_r2_expand(Rect2 r, float delta);
-//RWM_DEF Vec2 rwm_r2_diagonal(Rect2 r);
-//RWM_DEF float rwm_r2_surface_area(Rect2 r);
-//RWM_DEF int rwm_r2_max_extent(Rect2 r);
+RWM_DEF Rect2 rwm_r2_init_limit() {
+  Rect2 result = {
+    -FLT_MAX, -FLT_MAX,
+    FLT_MAX, FLT_MAX
+  };
+  return result;
+}
+
+RWM_DEF Rect2 rwm_r2_init(float x1, float y1, float x2, float y2) {
+  Rect2 result;
+  result.min_px = MIN(x1, x2);
+  result.min_py = MIN(y1, y2);
+  result.max_px = MAX(x1, x2);
+  result.max_py = MAX(y1, y2);
+  return result;
+}
+
+RWM_DEF Rect2 rwm_r2_init_v2(Vec2 p1, Vec2 p2) {
+  Rect2 result;
+  result.min_px = MIN(p1.x, p2.x);
+  result.min_py = MIN(p1.y, p2.y);
+  result.max_px = MAX(p1.x, p2.x);
+  result.max_py = MAX(p1.y, p2.y);
+  return result;
+}
+
+RWM_DEF Rect2 rwm_r2_union(Rect2 r1, Rect2 r2) {
+  Rect2 result;
+  result.min_px = MIN(r1.min_px, r2.min_px);
+  result.min_py = MIN(r1.min_py, r2.min_py);
+  result.max_px = MAX(r1.max_px, r2.max_px);
+  result.max_py = MAX(r1.max_py, r2.max_py);
+  return result;
+}
+
+RWM_DEF Rect2 rwm_r2_union_p(Rect2 r1, Point2 p) {
+  Rect2 result;
+  result.min_px = MIN(r1.min_px, p.x);
+  result.min_py = MIN(r1.min_py, p.y);
+  result.max_px = MAX(r1.max_px, p.x);
+  result.max_py = MAX(r1.max_py, p.y);
+  return result;
+}
+
+RWM_DEF Rect2 rwm_r2_intersection(Rect2 a, Rect2 b) {
+  Rect2 result = { 0.0f };
+  result.min_px = MAX(a.min_px, b.min_px);
+  result.min_py = MAX(a.min_py, b.min_py);
+  result.max_px = MIN(a.max_px, b.max_px);
+  result.max_py = MIN(a.max_py, b.max_py);
+  return result;
+}
+
+RWM_DEF bool rwm_r2_overlaps(Rect2 a, Rect2 b) {
+  int x = (a.max_px >= b.min_px) && (a.min_px <= b.max_px);
+  int y = (a.max_py >= b.min_py) && (a.min_py <= b.max_py);
+  return x && y;
+}
+
+RWM_DEF bool rwm_r2_pt_inside(Rect2 r, Vec2 p) {
+  int x = p.x >= r.min_px && p.x <= r.max_px;
+  int y = p.y >= r.min_py && p.y <= r.max_py;
+  return x && y;
+}
+
+RWM_DEF bool rwm_r2_pt_inside_excl(Rect2 r, Vec2 p) {
+  int x = p.x > r.min_px && p.x < r.max_px;
+  int y = p.y > r.min_py && p.y < r.max_py;
+  return x && y;
+}
+
+RWM_DEF Rect2 rwm_r2_expand(Rect2 r, float delta) {
+  Rect2 result = {};
+  Vec2 d = rwm_v2_init(delta, delta);
+  result.min_p = rwm_v2_subtract(r.min_p, d);
+  result.max_p = rwm_v2_add(r.max_p, d);
+  return result;
+}
+
+RWM_DEF Vec2 rwm_r2_diagonal(Rect2 r) {
+  Vec2 result = rwm_v2_subtract(r.max_p, r.min_p);
+  return result;
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // __RECT3
@@ -1214,15 +1287,18 @@ RWM_DEF Rect3 rwm_r3_init_limit() {
   return result;
 }
 
-RWM_DEF Rect3 rwm_r3_init(float min_x, float min_y, float min_z, float max_x, float max_y, float max_z) {
-  Rect3 result = {
-    min_x, min_y, min_z,
-    max_x, max_y, max_z
-  };
+RWM_DEF Rect3 rwm_r3_init(float x1, float y1, float z1, float x2, float y2, float z2) {
+  Rect3 result;
+  result.min_px = MIN(x1, x2);
+  result.min_py = MIN(y1, y2);
+  result.min_pz = MIN(z1, z2);
+  result.max_px = MAX(x1, x2);
+  result.max_py = MAX(y1, y2);
+  result.max_pz = MAX(z1, z2);
   return result;
 }
 
-RWM_DEF Rect3 rwm_r3_init_p(Vec3 p) {
+RWM_DEF Rect3 rwm_r3_init_p(Point3 p) {
   Rect3 result = {
     p.x, p.y, p.z,
     p.x, p.y, p.z
