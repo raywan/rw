@@ -35,7 +35,7 @@
 #define RW_USE_INTRINSICS
 #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
 #include <x86intrin.h>
-#elif defined(__MSC_VER)
+#elif defined(_WIN32)
 #include <intrin.h>
 #endif
 #endif // #if !defined(RW_DISABLE_INTRINSICS)
@@ -244,17 +244,25 @@ RWM_DEF Vec4 &operator*=(Vec4 &v, float a);
 #endif
 
 #if !defined(MIN)
+#if defined(_WIN32)
+#define MIN(a,b)  (((a) < (b)) ? (a) : (b))
+#else
 #define MIN(a,b) \
   ({ __typeof__ (a) _a = (a); \
     __typeof__ (b) _b = (b); \
     _a > _b ? _b : _a; })
 #endif
+#endif
 
 #if !defined(MAX)
+#if defined(_WIN32)
+#define MAX(a,b)  (((a) > (b)) ? (a) : (b))
+#else
 #define MAX(a,b) \
   ({ __typeof__ (a) _a = (a); \
     __typeof__ (b) _b = (b); \
 _a > _b ? _a : _b; })
+#endif
 #endif
 
 #if !defined(TO_RADIANS)

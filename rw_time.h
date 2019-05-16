@@ -50,7 +50,7 @@ typedef struct rwtm_timer {
 #if defined(__APPLE__) && defined(__MACH__)
   mach_timebase_info_data_t timebase;
   uint64_t start_ticks;
-#elif defined(__WIN32)
+#elif defined(_WIN32)
   LARGE_INTEGER start_counter;
   LARGE_INTEGER freq;
 #else
@@ -123,7 +123,7 @@ RWTM_DEF void rwtm_init() {
   // https://msdn.microsoft.com/en-us/library/windows/desktop/ms644905(v=vs.85).aspx
   // The frequncy returned is in COUNTS PER SECOND
   QueryPerformanceFrequency(&_timer.freq);
-  QueryPerformanceCounter(&_timer.start_count);
+  QueryPerformanceCounter(&_timer.start_counter);
 #else
   // NOTE(ray): https://linux.die.net/man/3/clock_gettime
   struct timespec tp;
@@ -159,7 +159,7 @@ RWTM_DEF uint64_t rwtm_now() {
   // NOTE(ray): https://docs.microsoft.com/en-us/windows/desktop/SysInfo/acquiring-high-resolution-time-stamps
   LARGE_INTEGER count;
   QueryPerformanceCounter(&count);
-  cur_time = rwtm__mul_div_i64(count.QuadPart - _timer.start_count.QuadPart, 1000000000 /* ns/sec */, _timer.freq.QuadPart);
+  cur_time = rwtm__mul_div_i64(count.QuadPart - _timer.start_counter.QuadPart, 1000000000 /* ns/sec */, _timer.freq.QuadPart);
 #else
   struct timespec tp;
   clock_gettime(CLOCK_MONOTONIC, &tp);

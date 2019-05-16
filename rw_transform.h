@@ -25,7 +25,7 @@
 #define RW_USE_INTRINSICS
 #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
 #include <x86intrin.h>
-#elif defined(__MSC_VER)
+#elif defined(_WIN32)
 #include <intrin.h>
 #endif
 #endif // #if !defined(RW_DISABLE_INTRINSICS)

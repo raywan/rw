@@ -29,7 +29,7 @@
 #if defined(__GNUC__) || defined(__GNUG__) || defined(__clang__)
 #include <x86intrin.h>
 #define NOT_MSCV
-#elif defined(__MSC_VER)
+#elif defined(_WIN32)
 #include <intrin.h>
 #endif
 
@@ -88,7 +88,7 @@ RWTH_DEF int64_t rwth_atomic_cas_i64(int64_t volatile *val, int64_t expected, in
   int64_t result;
 #if defined(NOT_MSCV)
   result = __sync_val_compare_and_swap(val, expected, new_val);
-#elif
+#else
   // NOTE(ray): This returns the value prior to exchange
   result = _InterlockedCompareExchange64(val, expected, new_val);
 #endif
