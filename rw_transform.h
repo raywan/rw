@@ -247,7 +247,17 @@ RWTR_DEF Transform rwtr_trs(Vec3 translate, Vec3 scale, unsigned int axis, float
     default:
       num_transforms = 2;
   }
-  Transform *compose_list[3] = {&s_tr, &r_tr, &t_tr};
+
+  Transform *compose_list[3];
+  if (num_transforms == 2) {
+    compose_list[0] = &s_tr;
+    compose_list[1] = &t_tr;
+  } else {
+    compose_list[0] = &s_tr;
+    compose_list[1] = &r_tr;
+    compose_list[2] = &t_tr;
+  }
+
   Transform result = rwtr_compose_n(compose_list, num_transforms);
   return result;
 }
