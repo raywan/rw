@@ -32,10 +32,19 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 typedef struct MemoryArena {
-	size_t block_size_bytes;
-	size_t cur_block_pos;
-	size_t cur_alloc_size;
+  size_t block_size_bytes;
+  size_t cur_block_pos;
+  size_t cur_alloc_size;
+  uint8_t *cur_block;
+  Block *used_blocks_node;
+  Block *available_blocks_node;
 } MemoryArena;
+
+typedef struct Block {
+  uint8_t *p;
+  size_t cur_alloc_size;
+  Block *next;
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 // __API
@@ -45,7 +54,7 @@ typedef struct MemoryArena {
 extern "C" {
 #endif
 
-RWMEM_DEF void *rwmem_aligned_malloc(size_t size, size_t alignment);
+RWMEM_DEF void *rwmem_aligned_alloc(size_t size, size_t alignment);
 RWMEM_DEF void rwmem_free(void *p);
 
 #ifdef __cplusplus
@@ -84,7 +93,7 @@ RWMEM_DEF void rwmem_free(void *p);
 
 // Aligned memory allocation to the heap
 // alignment must be a power of 2 and multiple of sizeof(void *)
-RWMEM_DEF void *rwmem_aligned_malloc(size_t size, size_t alignment) {
+RWMEM_DEF void *rwmem_aligned_alloc(size_t size, size_t alignment) {
 	void *result;
 #if defined(RWMEM_POSIX_MEMALIGN_AVAILABLE)
 	posix_memalign(&result, alignment, size);
@@ -96,13 +105,62 @@ RWMEM_DEF void *rwmem_aligned_malloc(size_t size, size_t alignment) {
 	return result;
 }
 
-RWMEM_DEF void rwmem_free(void *p) {
+RWMEM_DEF void rwmem_aligned_free(void *p) {
 	if (p == NULL) return;
 #if defined(ALIGNED_MALLOC_AVAILABLE)
 	_aligned_free(p);
 #else
 	free(p);
 #endif
+}
+
+RWMEM_DEF MemoryArena rwmem_arena_create(size_t block_size_bytes) {
+  MemoryArena result;
+  result.block_size_bytes = 262144;
+  result.block_size_bytes = block_size_bytes;
+  result.cur_block_pos = 0;
+  result.cur_alloc_size = 0;
+  result.cur_block = NULL;
+  return result;
+}
+
+RWMEM_DEF void *rwmem_arena_alloc(MemoryArena *arena, size_t bytes) {
+  // NOTE(ray): Round up requested bytes to align. Safer.
+  bytes = ALIGN16(bytes);
+  if (arena->cur_block_pos + bytes > arena->cur_alloc_size) {
+    if (arena->cur_block) {
+      // Get the next empty node
+      Block *cur_used_blocks_node = arena->used_block_node;
+      while (cur_used_blocks_node) cur_used_blocks_node = cur_used_blocks_node->next;
+      cur_used_blocks_node = (Block *) rwmem_aligned_alloc(sizeof(Block), 16);
+      cur_used_blocks_node->cur_alloc_size = arena->cur_alloc_size;
+      cur_used_blocks_node->p = arena->cur_block;
+      arena->cur_block = NULL;
+    }
+    Block *cur_available_blocks_node = arena->used_block_node;
+    while (cur_available_blocks_node) {
+      if (cur_available_blocks_node->cur_alloc_size >= bytes) {
+        arena->cur_alloc_size = cur_available_blocks_node->cur_alloc_size;
+        arena->cur_block = cur_available_blocks_node->p;
+        rwm
+        break;
+      }
+      cur_used_blocks_node = cur_used_blocks_node->next;
+    }
+
+    if (!arena->cur_block) {
+      arena->cur_alloc_size = bytes > arena->block_size_bytes ? bytes : arena->block_size_bytes;
+      arena->cur_block = (uint8_t) rwmem_aligned_alloc(arena->cur_alloc_size);
+    }
+
+    arena->cur_block_pos = 0;
+  }
+  void *result = arena->cur_block + arena->cur_block_pos;
+  arena->cur_block_pos += bytes;
+  return result;
+}
+
+RWMEM_DEF void rwmem_arena_free(MemoryArena *arena) {
 }
 
 #endif // #if defined(RWMEM_IMPLEMENTATION) || defined(RWMEM_HEADER_ONLY)
