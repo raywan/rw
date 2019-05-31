@@ -10,9 +10,7 @@
 #include "v4_test.cpp"
 #include "m4_test.cpp"
 #include "tr_test.cpp"
-
-#define RWMEM_IMPLEMENTATION
-#include "../rw_memory.h"
+#include "mem_test.cpp"
 
 #define RWTM_IMPLEMENTATION
 #include "../rw_time.h"
@@ -30,20 +28,10 @@ int main() {
   run_rwm_m4_test();
   run_rwtr_test();
   run_th_test();
-
-  char *p = (char *) rwmem_aligned_alloc(19, 8);
-  assert(IS_ALIGNED(p, 8));
-  printf("%p\n", p);
-  for (int i = 0; i < 19; i++) {
-    p[i] = 'a';
-  }
-  p[18] = '\0';
-  printf("%s\n", p);
-  rwmem_aligned_free(p);
+  mem_test();
 
   rwtm_init();
   double now = rwtm_now();
-  sleep(5);
+  sleep(1);
   printf("time: %f\n", rwtm_to_sec(rwtm_since(now)));
-
 }
