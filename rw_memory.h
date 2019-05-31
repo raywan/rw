@@ -55,7 +55,13 @@ extern "C" {
 #endif
 
 RWMEM_DEF void *rwmem_aligned_alloc(size_t size, size_t alignment);
-RWMEM_DEF void rwmem_free(void *p);
+RWMEM_DEF void rwmem_aligned_free(void *p);
+
+RWMEM_DEF MemoryArena rwmem_arena_create(size_t block_size_bytes);
+RWMEM_DEF void *rwmem_arena_alloc(MemoryArena *arena, size_t bytes);
+RWMEM_DEF void rwmem_arena_free(MemoryArena *arena);
+// Reset offset and move all memory from used blocks to available blocks
+RWMEM_DEF void rwmem_arena_reset(MemoryArena *arena);
 
 #ifdef __cplusplus
 }
@@ -130,21 +136,26 @@ RWMEM_DEF void *rwmem_arena_alloc(MemoryArena *arena, size_t bytes) {
   if (arena->cur_block_pos + bytes > arena->cur_alloc_size) {
     if (arena->cur_block) {
       // Get the next empty node
-      Block *cur_used_blocks_node = arena->used_block_node;
+      Block *cur_used_blocks_node = arena->used_blocks_node;
       while (cur_used_blocks_node) cur_used_blocks_node = cur_used_blocks_node->next;
       cur_used_blocks_node = (Block *) rwmem_aligned_alloc(sizeof(Block), 16);
       cur_used_blocks_node->cur_alloc_size = arena->cur_alloc_size;
       cur_used_blocks_node->p = arena->cur_block;
       arena->cur_block = NULL;
     }
-    Block *cur_available_blocks_node = arena->used_block_node;
+
+    // Try to get memory from arena->available_blocks_node
+    Block *cur_available_blocks_node = arena->available_blocks_node;
+    Block *prev_available_blocks_node = NULL;
     while (cur_available_blocks_node) {
       if (cur_available_blocks_node->cur_alloc_size >= bytes) {
         arena->cur_alloc_size = cur_available_blocks_node->cur_alloc_size;
         arena->cur_block = cur_available_blocks_node->p;
-        rwm
+        prev_available_blocks_node->next = cur_available_blocks_node->next;
+        rwmem_aligned_free(cur_available_blocks_node);
         break;
       }
+      prev_available_blocks_node = cur_available_blocks_node;
       cur_used_blocks_node = cur_used_blocks_node->next;
     }
 
@@ -155,12 +166,31 @@ RWMEM_DEF void *rwmem_arena_alloc(MemoryArena *arena, size_t bytes) {
 
     arena->cur_block_pos = 0;
   }
+
   void *result = arena->cur_block + arena->cur_block_pos;
   arena->cur_block_pos += bytes;
   return result;
 }
 
 RWMEM_DEF void rwmem_arena_free(MemoryArena *arena) {
+  rwmem_aligned_free(arena->cur_block);
+  Block *cur_used_blocks_node = arena->used_block_node;
+  while (cur_used_blocks_node) {
+    Block *next = cur_used_blocks_node->next;
+    rwmem_aligned_free(cur_used_blocks_node);
+    cur_used_blocks_node = next;
+  }
+  Block *cur_available_blocks_node = arena->available_blocks_node;
+  while (cur_available_blocks_node) {
+    Block *next = cur_available_blocks_node->next;
+    rwmem_aligned_free(cur_available_blocks_node);
+    cur_available_blocks_node = next;
+  }
+}
+
+// Reset offset and move all memory from used blocks to available blocks
+RWMEM_DEF void rwmem_arena_reset(MemoryArena *arena) {
+  arena->cur_block_pos = 0;
 }
 
 #endif // #if defined(RWMEM_IMPLEMENTATION) || defined(RWMEM_HEADER_ONLY)

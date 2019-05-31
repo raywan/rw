@@ -31,7 +31,7 @@ int main() {
   run_rwtr_test();
   run_th_test();
 
-  char *p = (char *) rwmem_aligned_malloc(19, 8);
+  char *p = (char *) rwmem_aligned_alloc(19, 8);
   assert(IS_ALIGNED(p, 8));
   printf("%p\n", p);
   for (int i = 0; i < 19; i++) {
@@ -39,7 +39,7 @@ int main() {
   }
   p[18] = '\0';
   printf("%s\n", p);
-  rwmem_free(p);
+  rwmem_aligned_free(p);
 
   rwtm_init();
   double now = rwtm_now();
