@@ -1,11 +1,12 @@
 # rw
 
-A collection of code/utilties/libraries that I have written from scratch.
+A collection of code/utilities/libraries that I have written from scratch, supporting Windows (MSCV), Mac and Linux (gcc or clang).
 
 Why? I feel that it is important for the growth of a person doing game engine/graphics programming to have a firm grasp
 of these concepts and be able to implement things from scratch.
 
 This repo contains code that I have already found or will find useful for my game development and graphics projects.
+Examples of projects being my Monte Carlo path tracer, OpenGL renderer and SDL2/OpenGL game engine.
 I found myself writing common code across all these projects so I decided to put it all in a single repo that
 all current (and future) projects can use. This repo will also
 continue to grow along with me. **For anyone other than myself using this, all the code is
@@ -68,13 +69,16 @@ For example (in `rw_math.h`),
 
 ## TODO
 
-- rw_mesh.h - Migrate OBJ loader/mesh code from other projects here
+- rw_bvh.h - Bounding Volume Hierachy (BVH). Move this in from path tracing project.
 
 - rw_buffer.h - Dynamic buffers, ring buffers etc. (Move this in from RTOS project)
 
+- rw_hashtable.h - Hashtable
+
+- rw_mesh.h - Migrate OBJ loader/mesh code from other projects here
+
 - rw_sort.h - Various sorting algorithms
 
-- rw_hashtable.h - Hashtable
 
 ## Inspirations
 
@@ -82,3 +86,4 @@ For example (in `rw_math.h`),
 - [nothings/stb](https://github.com/nothings/stb)
 - [raysan5/raylib](https://github.com/raysan5/raylib)
 - [koekeishiya/chunkwm](https://github.com/koekeishiya/chunkwm)
+- [mmp/pbrt-v3](https://github.com/mmp/pbrt-v3)
