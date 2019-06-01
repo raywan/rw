@@ -28,6 +28,7 @@ int main() {
   run_rwm_m4_test();
   run_rwtr_test();
   run_th_test();
+      // TODO(ray): MAKE THIS NOT USE A LINKED LIST!!!
   mem_test();
 
   rwtm_init();
