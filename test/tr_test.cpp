@@ -1,4 +1,3 @@
-#include "tr_test.h"
 #include <assert.h>
 #include <stdio.h>
 #define RWTR_IMPLEMENTATION
