@@ -31,7 +31,7 @@ SmallTest *create_small(MemoryArena *arena, float a, int b, char c) {
   printf("%f %d %c\n", result->a, result->b, result->c);
 }
 
-void mem_test() {
+void run_rwmem_test() {
   char *p = (char *) rwmem_aligned_alloc(19, 8);
   assert(IS_ALIGNED(p, 8));
   printf("%p\n", p);

@@ -1,5 +1,7 @@
 #include <assert.h>
+#if !defined(_WIN32)
 #include <pthread.h>
+#endif
 #include <stdio.h>
 #include "../rw_th.h"
 
@@ -8,6 +10,10 @@
 
 static int64_t val = 0;
 
+#if defined(_WIN32)
+void run_rwth_test() {}
+#else
+
 void *add_func(void *t) {
   for (int i = 0; i < 100; i++) {
     rwth_atomic_add_i64(&val, 1);
@@ -15,7 +21,7 @@ void *add_func(void *t) {
   pthread_exit(NULL);
 }
 
-void run_th_test() {
+void run_rwth_test() {
 	printf("run_rwth_test");
   pthread_t threads[NUM_THREADS];
   int rc;
@@ -39,3 +45,4 @@ void run_th_test() {
   assert(val == EXPECTED_RESULT);
 	printf(" - PASSED\n");
 }
+#endif

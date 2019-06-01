@@ -1,5 +1,9 @@
 #include <stdio.h>
+#if defined(_WIN32)
+#include <windows.h>
+#else
 #include <unistd.h>
+#endif
 #include <assert.h>
 #include "../rw_types.h"
 #define RWM_IMPLEMENTATION
@@ -27,12 +31,15 @@ int main() {
   run_rwm_v4_test();
   run_rwm_m4_test();
   run_rwtr_test();
-  run_th_test();
-      // TODO(ray): MAKE THIS NOT USE A LINKED LIST!!!
-  mem_test();
+  run_rwth_test();
+  run_rwmem_test();
 
   rwtm_init();
   double now = rwtm_now();
+#if defined(_WIN32)
+  Sleep(1000);
+#else
   sleep(1);
+#endif
   printf("time: %f\n", rwtm_to_sec(rwtm_since(now)));
 }

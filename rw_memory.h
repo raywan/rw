@@ -99,7 +99,7 @@ RWMEM_DEF void rwmem_arena_reset(MemoryArena *arena);
 #include <stdlib.h>
 #define RWMEM_POSIX_MEMALIGN_AVAILABLE
 #elif defined(_WIN32)
-#include <alloc.h>
+#include <malloc.h>
 #define RWMEM_ALIGNED_MALLOC_AVAILABLE
 #else
 #include <stdlib.h>
@@ -113,7 +113,7 @@ RWMEM_DEF void *rwmem_aligned_alloc(size_t size, size_t alignment) {
 #if defined(RWMEM_POSIX_MEMALIGN_AVAILABLE)
   posix_memalign(&result, alignment, size);
 #elif defined(RWMEM_ALIGNED_MALLOC_AVAILABLE)
-  result = _aligned_malloc(size, alignment)
+  result = _aligned_malloc(size, alignment);
 #else
   memalign(&result, alignment, size);
 #endif
