@@ -2,13 +2,11 @@
 #include <stdio.h>
 #include "../rw_math.h"
 
-#define EPSILON 0.00001f
-
 static inline void rwm_v4_assert_eq(Vec4 v, float x, float y, float z, float w) {
-	assert(v.x == x);
-	assert(v.y == y);
-	assert(v.z == z);
-	assert(v.w == w);
+	assert(ABS(v.x - x) < EPSILON);
+	assert(ABS(v.y - y) < EPSILON);
+	assert(ABS(v.z - z) < EPSILON);
+	assert(ABS(v.w - w) < EPSILON);
 }
 
 void run_rwm_v4_test() {

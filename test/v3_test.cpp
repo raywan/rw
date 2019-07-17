@@ -2,12 +2,10 @@
 #include <stdio.h>
 #include "../rw_math.h"
 
-#define EPSILON 0.00001f
-
 static inline void rwm_v3_assert_eq(Vec3 v, float x, float y, float z) {
-	assert(v.x == x);
-	assert(v.y == y);
-	assert(v.z == z);
+	assert(ABS(v.x - x) < EPSILON);
+	assert(ABS(v.y - y) < EPSILON);
+	assert(ABS(v.z - z) < EPSILON);
 }
 
 void run_rwm_v3_test() {

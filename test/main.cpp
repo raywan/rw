@@ -9,10 +9,13 @@
 #define RWM_IMPLEMENTATION
 #include "../rw_math.h"
 
+#define EPSILON 0.00001f
+
 #include "v2_test.cpp"
 #include "v3_test.cpp"
 #include "v4_test.cpp"
 #include "m4_test.cpp"
+#include "q_test.cpp"
 #include "tr_test.cpp"
 #include "mem_test.cpp"
 
@@ -30,6 +33,7 @@ int main() {
   run_rwm_v3_test();
   run_rwm_v4_test();
   run_rwm_m4_test();
+  run_rwm_q_test();
   run_rwtr_test();
   run_rwth_test();
   run_rwmem_test();

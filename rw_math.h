@@ -143,10 +143,27 @@ RWM_DEF Mat4 rwm_m4_hadamard(Mat4 a, Mat4 b);
 RWM_DEF Mat4 rwm_m4_inverse(Mat4 m);
 
 // __QUATERNION
+RWM_DEF Quaternion rwm_slerp(Quaternion a , Quaternion b, float t);
 RWM_DEF Quaternion rwm_q_init(float x, float y, float z, float w);
 RWM_DEF Quaternion rwm_q_identity();
 RWM_DEF Quaternion rwm_q_init_v4(Vec4 v);
+// Creates a unit quaternion representing a rotation of theta about an axis 
+RWM_DEF Quaternion rwm_q_init_rotation(Vec3 axis, float theta);
+RWM_DEF Mat4 rwm_q_to_m4(Quaternion q);
+// Converts a unit quaternion to a matrix
+RWM_DEF Mat4 rwm_q_rotation_to_m4(Quaternion r);
+// Converts an special orthogonal matrix to a unit quaternion
+RWM_DEF Quaternion rwm_q_m4_to_q(Mat4 *m);
+RWM_DEF Quaternion rwm_q_add(Quaternion q1, Quaternion q2);
+RWM_DEF Quaternion rwm_q_subtract(Quaternion q1, Quaternion q2);
+RWM_DEF Quaternion rwm_q_mult(Quaternion q1, Quaternion q2);
+RWM_DEF Quaternion rwm_q_scalar_mult(float a, Quaternion q);
 RWM_DEF float rwm_q_length(Quaternion q);
+RWM_DEF Quaternion rwm_q_conjugate(Quaternion q);
+RWM_DEF Quaternion rwm_q_inverse(Quaternion q);
+RWM_DEF Quaternion rwm_q_normalize(Quaternion q);
+RWM_DEF Quaternion rwm_q_p3_apply_rotation(Quaternion q, Vec4 v);
+RWM_DEF Quaternion rwm_q_v4_apply_rotation(Quaternion q, Vec4 v);
 
 // __RECT2
 RWM_DEF Rect2 rwm_r2_init_limit();
@@ -220,6 +237,7 @@ RWM_DEF Vec4 operator*(Vec4 v, float a);
 RWM_DEF Vec4 operator*(Vec4 a, Vec4 b);
 RWM_DEF Vec4 &operator*=(Vec4 &v, float a);
 // TODO(ray): Add Matrix ops
+// TODO(ray): Add Quaternion ops
 #endif
 
 
@@ -1135,6 +1153,14 @@ RWM_DEF Mat4 rwm_m4_inverse(Mat4 m) {
 // __QUATERNION
 ///////////////////////////////////////////////////////////////////////////////
 
+RWM_DEF Quaternion rwm_slerp(Quaternion a , Quaternion b, float t) {
+  // TODO
+  a = rwm_q_normalize(a);
+  b = rwm_q_normalize(b);
+  Quaternion result;
+  return result;
+}
+
 RWM_DEF Quaternion rwm_q_init(float x, float y, float z, float w) {
   Quaternion result = { x, y, z, w };
   return result;
@@ -1150,23 +1176,104 @@ RWM_DEF Quaternion rwm_q_init_v4(Vec4 v) {
   return result;
 }
 
-//RWM_DEF Quaternion rwm_q_add(Quaternion q1, Quaternion q2) {
-//}
+RWM_DEF Quaternion rwm_q_init_rotation(Vec3 axis, float theta) {
+  Quaternion result;
+  Vec3 normalized_axis = rwm_v3_normalize(axis);
+  result.x = sin(theta/2.0f) * normalized_axis.x;
+  result.y = sin(theta/2.0f) * normalized_axis.y;
+  result.z = sin(theta/2.0f) * normalized_axis.z;
+  result.w = cos(theta/2.0f);
+  return result;
+}
 
-//RWM_DEF Quaternion rwm_q_subtract(Quaternion q1, Quaternion q2) {
-//}
+RWM_DEF Mat4 rwm_q_to_m4(Quaternion q) {
+  float s = 2.0/SQUARE(rwm_q_length(q));
+  Mat4 result = rwm_m4_init_f(
+    1.0 - s*(SQUARE(q.y) + SQUARE(q.z)), s*(q.x*q.y - q.w*q.z), s*(q.x*q.z + q.w*q.y), 0.0,
+    s*(q.x*q.y + q.w*q.z), 1.0 - s*(SQUARE(q.x) + SQUARE(q.z)), s*(q.y*q.z - q.w*q.x), 0.0,
+    s*(q.x*q.z - q.w*q.y), s*(q.y*q.z + q.w*q.x), 1.0 - s*(SQUARE(q.x) + SQUARE(q.y)), 0.0,
+    0.0, 0.0, 0.0, 1.0
+  );
+  return result;
+}
 
-//RWM_DEF Quaternion rwm_q_mult(Quaternion q1, Quaternion q2) {
-//}
+RWM_DEF Mat4 rwm_q_rotation_to_m4(Quaternion r) {
+  Mat4 result = rwm_m4_init_f(
+    1.0 - 2.0*(SQUARE(r.y) + SQUARE(r.z)), 2.0*(r.x*r.y - r.w*r.z), 2.0*(r.x*r.z + r.w*r.y), 0.0,
+    2.0*(r.x*r.y + r.w*r.z), 1.0 - 2.0*(SQUARE(r.x) + SQUARE(r.z)), 2.0*(r.y*r.z - r.w*r.x), 0.0,
+    2.0*(r.x*r.z - r.w*r.y), 2.0*(r.y*r.z + r.w*r.x), 1.0 - 2.0*(SQUARE(r.x) + SQUARE(r.y)), 0.0,
+    0.0, 0.0, 0.0, 1.0
+  );
+  return result;
+}
 
-//RWM_DEF Quaternion rwm_q_scalar_mult(float a, Quaternion q) {
-//}
+RWM_DEF Quaternion rwm_q_m4_to_q(Mat4 *m) {
+  Quaternion result;
+  float trace = rwm_m4_trace(*m);
+  if (trace > 0) {
+    float s = sqrt(trace + 1.0) * 2.0;
+    result.w = 0.25 * s;
+    result.x = (m->e[2][1] - m->e[1][2]) / s;
+    result.y = (m->e[0][2] - m->e[2][0]) / s;
+    result.z = (m->e[1][0] - m->e[0][1]) / s;
+  } else if ((m->e[0][0] > m->e[1][1]) & (m->e[0][0] > m->e[2][2])) {
+    float s = sqrt(1.0 + m->e[0][0] - m->e[1][1] + m->e[2][2]); // 4*q_x;
+    result.w = (m->e[2][1] - m->e[1][2]) / s;
+    result.x = 0.25 * s;
+    result.y = (m->e[1][0] + m->e[0][1]) / s;
+    result.z = (m->e[0][2] + m->e[2][0]) / s;
+  } else if (m->e[1][1] > m->e[2][2]) {
+    float s = sqrt(1.0 + m->e[1][1] - m->e[0][0] - m->e[2][2]); // 4*q_y;
+    result.w = (m->e[0][2] - m->e[2][0]) / s;
+    result.x = (m->e[1][0] + m->e[0][1]) / s;
+    result.y = 0.25 * s;
+    result.z = (m->e[2][1] + m->e[1][2]) / s;
+  } else {
+    float s = sqrt(1.0 + m->e[2][2] - m->e[0][0] - m->e[1][1]); // 4*q_z;
+    result.w = (m->e[1][0] - m->e[0][1]) / s;
+    result.x = (m->e[0][2] + m->e[2][0]) / s;
+    result.y = (m->e[2][1] + m->e[1][2]) / s;
+    result.z = 0.25 * s;
+  }
 
-//RWM_DEF Quaternion rwm_q_scalar_div(Quaternion q, float f) {
-//}
+  return result;
+}
 
-//RWM_DEF float rwm_q_inner(Quaternion q1, Quaternion q2) {
-//}
+RWM_DEF Quaternion rwm_q_add(Quaternion q1, Quaternion q2) {
+  Quaternion result;
+  result.x = q1.x + q2.x;
+  result.y = q1.y + q2.y;
+  result.z = q1.z + q2.z;
+  result.w = q1.w + q2.w;
+  return result;
+}
+
+RWM_DEF Quaternion rwm_q_subtract(Quaternion q1, Quaternion q2) {
+  Quaternion result;
+  result.x = q1.x - q2.x;
+  result.y = q1.y - q2.y;
+  result.z = q1.z - q2.z;
+  result.w = q1.w - q2.w;
+  return result;
+}
+
+RWM_DEF Quaternion rwm_q_mult(Quaternion q1, Quaternion q2) {
+  Quaternion result;
+  result.x = q1.y*q2.z - q1.z*q2.y + q1.x*q2.w + q1.w*q2.x;
+  result.y = q1.z*q2.x - q1.x*q2.z + q1.y*q2.w + q1.w*q2.y;
+  result.z = q1.x*q2.y - q1.y*q2.x + q1.z*q2.w + q1.w*q2.z;
+  result.w = q1.x*q2.x - q1.y*q2.y - q1.z*q2.z - q1.w*q2.w;
+  return result;
+}
+
+RWM_DEF Quaternion rwm_q_scalar_mult(float a, Quaternion q) {
+  Quaternion result;
+  result.x = a * q.x;
+  result.y = a * q.y;
+  result.z = a * q.z;
+  result.w = a * q.w;
+  return result;
+}
 
 RWM_DEF float rwm_q_length(Quaternion q) {
 #if defined(RW_USE_INTRINSICS)
@@ -1177,14 +1284,23 @@ RWM_DEF float rwm_q_length(Quaternion q) {
   return result;
 }
 
+RWM_DEF Quaternion rwm_q_conjugate(Quaternion q) {
+  Quaternion result = q;
+  result.x *= -1;
+  result.y *= -1;
+  result.z *= -1;
+  return result;
+}
+
 RWM_DEF Quaternion rwm_q_inverse(Quaternion q) {
   // conjugate of q times length squared
   // TODO(ray): Assert that the length isn't 0
   float len = rwm_q_length(q);
   Quaternion result = q;
-  result.x *= -1/SQUARE(len);
-  result.y *= -1/SQUARE(len);
-  result.z *= -1/SQUARE(len);
+  result.x *= -1.0/SQUARE(len);
+  result.y *= -1.0/SQUARE(len);
+  result.z *= -1.0/SQUARE(len);
+  result.w *= 1.0/SQUARE(len);
   return result;
 }
 
