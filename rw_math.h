@@ -1345,8 +1345,27 @@ RWM_DEF Mat4 rwm_m4_inverse(Mat4 m) {
 RWM_DEF Quaternion rwm_slerp(Quaternion a , Quaternion b, float t) {
   a = rwm_q_normalize(a);
   b = rwm_q_normalize(b);
+  float dot = rwm_q_dot(a, b);   
+  if (dot < 0.0f) {
+    a = rwm_q_scalar_mult(-1, a);
+    dot = -dot;
+  }
   Quaternion result;
+  if (dot > 0.9995) {
+    // The inputs are too close, so lerp and normalize for the result
+    result = rwm_q_add(a, rwm_q_scalar_mult(t, rwm_q_subtract(b, a)));
+    result = rwm_q_normalize(result);
+    return result;
+  }
+  float theta_0 = acos(dot); // angle between input
+  float theta = t * theta_0; // angle between a and result
+  float sin_theta = sin(theta);
+  float sin_theta_0 = sin(theta_0);
 
+  float s0 = cos(theta) - dot * sin_theta / sin_theta_0;
+  float s1 = sin_theta / sin_theta_0;
+
+  result = rwm_q_add(rwm_q_scalar_mult(s0, a), rwm_q_scalar_mult(s1, b));
   return result;
 }
 
