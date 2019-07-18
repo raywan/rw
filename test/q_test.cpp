@@ -16,7 +16,7 @@ void run_rwm_q_test() {
   Mat4 rot_mat_general = rwm_q_to_m4(r1);
   Mat4 rot_mat = rwm_q_rotation_to_m4(r1);
 
-  // NOTE(ray): Values computed with https://www.andre-gaschler.com/rotationconverter/ 
+  // NOTE(ray): Values computed with https://www.andre-gaschler.com/rotationconverter/
   //rwm_q_assert_eq(r, 0.0f, 0.382683f, 0.0f, 0.923879f);
   rwm_q_assert_eq(r1, 0.116914, 0.3388812, 0.0762483, 0.9304176);
 	rwm_m4_assert_eq(&rot_mat_general,
@@ -42,6 +42,9 @@ void run_rwm_q_test() {
 
   Quaternion conj_r = rwm_q_conjugate(r1);
   rwm_q_assert_eq(conj_r, -0.116914, -0.3388812, -0.0762483, 0.9304176);
+
+  Quaternion inv_r = rwm_q_inverse(r1);
+  rwm_q_assert_eq(inv_r, -0.116914, -0.3388812, -0.0762483, 0.9304176);
 
 	puts(" - PASSED");
 }
