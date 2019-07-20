@@ -92,7 +92,7 @@ RWM_DEF float rwm_v2_length_squared(Vec2 v);
 RWM_DEF float rwm_v2_length(Vec2 v);
 RWM_DEF Vec2 rwm_v2_normalize(Vec2 v);
 RWM_DEF Vec2 rwm_v2_hadamard(Vec2 a, Vec2 b);
-RWM_DEF float rwm_v2_inner(Vec2 a, Vec2 b);
+RWM_DEF float rwm_v2_dot(Vec2 a, Vec2 b);
 RWM_DEF Vec2 rwm_v2_lerp(Vec2 a, float t, Vec2 b);
 
 // __VEC3
@@ -108,7 +108,7 @@ RWM_DEF float rwm_v3_length_squared(Vec3 v);
 RWM_DEF float rwm_v3_length(Vec3 v);
 RWM_DEF Vec3 rwm_v3_normalize(Vec3 v);
 RWM_DEF Vec3 rwm_v3_hadamard(Vec3 a, Vec3 b);
-RWM_DEF float rwm_v3_inner(Vec3 a, Vec3 b);
+RWM_DEF float rwm_v3_dot(Vec3 a, Vec3 b);
 RWM_DEF Vec3 rwm_v3_cross(Vec3 a, Vec3 b);
 RWM_DEF Vec3 rwm_v3_lerp(Vec3 a, float t, Vec3 b);
 
@@ -125,7 +125,7 @@ RWM_DEF float rwm_v4_length_squared(Vec4 v);
 RWM_DEF float rwm_v4_length(Vec4 v);
 RWM_DEF Vec4 rwm_v4_normalize(Vec4 v);
 RWM_DEF Vec4 rwm_v4_hadamard(Vec4 a, Vec4 b);
-RWM_DEF float rwm_v4_inner(Vec4 a, Vec4 b);
+RWM_DEF float rwm_v4_dot(Vec4 a, Vec4 b);
 RWM_DEF Vec4 rwm_v4_lerp(Vec4 a, float t, Vec4 b);
 
 // __MAT3
@@ -159,6 +159,7 @@ RWM_DEF Mat4 rwm_m4_hadamard(Mat4 a, Mat4 b);
 RWM_DEF Mat4 rwm_m4_inverse(Mat4 m);
 
 // __QUATERNION
+RWM_DEF void rwm_q_puts(Quaternion *q);
 RWM_DEF Quaternion rwm_slerp(Quaternion a , Quaternion b, float t);
 RWM_DEF Quaternion rwm_q_init(float x, float y, float z, float w);
 RWM_DEF Quaternion rwm_q_identity();
@@ -462,7 +463,7 @@ RWM_DEF Vec2 rwm_v2_hadamard(Vec2 a, Vec2 b) {
   return result;
 }
 
-RWM_DEF float rwm_v2_inner(Vec2 a, Vec2 b) {
+RWM_DEF float rwm_v2_dot(Vec2 a, Vec2 b) {
   return (a.x * b.x) +
          (a.y * b.y);
 }
@@ -622,7 +623,7 @@ RWM_DEF Vec3 rwm_v3_hadamard(Vec3 a, Vec3 b) {
   return result;
 }
 
-RWM_DEF float rwm_v3_inner(Vec3 a, Vec3 b) {
+RWM_DEF float rwm_v3_dot(Vec3 a, Vec3 b) {
   return (a.x * b.x) +
          (a.y * b.y) +
          (a.z * b.z);
@@ -830,7 +831,7 @@ RWM_DEF Vec4 rwm_v4_hadamard(Vec4 a, Vec4 b) {
   return result;
 }
 
-RWM_DEF float rwm_v4_inner(Vec4 a, Vec4 b) {
+RWM_DEF float rwm_v4_dot(Vec4 a, Vec4 b) {
   return (a.x * b.x) +
          (a.y * b.y) +
          (a.z * b.z) +
@@ -1339,6 +1340,10 @@ RWM_DEF Mat4 rwm_m4_inverse(Mat4 m) {
 ///////////////////////////////////////////////////////////////////////////////
 // __QUATERNION
 ///////////////////////////////////////////////////////////////////////////////
+
+RWM_DEF void rwm_q_puts(Quaternion *q) {
+  printf("[%f, %f, %f, %f]\n", q->x, q->y, q->z, q->w);
+}
 
 RWM_DEF Quaternion rwm_slerp(Quaternion a , Quaternion b, float t) {
   a = rwm_q_normalize(a);

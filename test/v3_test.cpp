@@ -60,9 +60,9 @@ void run_rwm_v3_test() {
 	rwm_v3_assert_eq(hadamard_result, 1.0f, 4.0f, 9.0f);
 	rwm_v3_assert_eq(v * v2, 1.0f, 4.0f, 9.0f);
 
-	// Inner
-	float inner_result = rwm_v3_inner(v, v2);
-	assert(inner_result == 14.0f);
+	// dot
+	float dot_result = rwm_v3_dot(v, v2);
+	assert(dot_result == 14.0f);
 
 	// Cross
 	Vec3 cross_result = rwm_v3_cross(rwm_v3_init(1.0f, 3.0f, 3.0f), rwm_v3_init(4.0f, 5.0f, 3.0f));
