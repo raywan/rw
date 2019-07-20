@@ -179,9 +179,7 @@ RWM_DEF Quaternion rwm_q_conjugate(Quaternion q);
 RWM_DEF Quaternion rwm_q_inverse(Quaternion q);
 RWM_DEF Quaternion rwm_q_normalize(Quaternion q);
 RWM_DEF float rwm_q_dot(Quaternion q1, Quaternion q2);
-// NOTE(ray): Should I really have this here?
-RWM_DEF Quaternion rwm_q_p3_apply_rotation(Quaternion q, Vec4 v);
-RWM_DEF Quaternion rwm_q_v4_apply_rotation(Quaternion q, Vec4 v);
+RWM_DEF Vec3 rwm_q_v3_apply_rotation(Quaternion r, Vec3 v);
 
 // __RECT2
 RWM_DEF Rect2 rwm_r2_init_limit();
@@ -1542,6 +1540,16 @@ RWM_DEF Quaternion rwm_q_normalize(Quaternion q) {
 RWM_DEF float rwm_q_dot(Quaternion q1, Quaternion q2) {
   float result;
   result = q1.x*q2.x + q1.y*q2.y + q1.z*q2.z + q1.w*q2.w;
+  return result;
+}
+
+RWM_DEF Vec3 rwm_q_v3_apply_rotation(Quaternion r, Vec3 v) {
+  Vec3 result; 
+  Quaternion conj_r = rwm_q_conjugate(r);
+  Quaternion q = rwm_q_init(v.x, v.y, v.z, 0.0);
+  q = rwm_q_mult(r, q);
+  q = rwm_q_mult(q, conj_r);
+  result = rwm_v3_init(q.x, q.y, q.z);
   return result;
 }
 
