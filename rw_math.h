@@ -1,6 +1,6 @@
 /*
   FILE: rw_math.h
-  VERSION: 0.2.0
+  VERSION: 0.3.0
   DESCRIPTION: Math library for games/graphics.
   AUTHOR: Raymond Wan
   USAGE: Simply including the file will only give you declarations (see __API)
