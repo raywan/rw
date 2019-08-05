@@ -45,6 +45,13 @@
 
 #include "rw_math.h"
 
+typedef enum RWTR_AXIS {
+  RWTR_NO_AXIS = -1,
+  RWTR_X_AXIS,
+  RWTR_Y_AXIS,
+  RWTR_Z_AXIS,
+} RWTR_AXIS;
+
 ///////////////////////////////////////////////////////////////////////////////
 // __API
 ///////////////////////////////////////////////////////////////////////////////
@@ -59,6 +66,7 @@ RWTR_DEF Transform rwtr_init_scale(float x, float y, float z);
 RWTR_DEF Transform rwtr_init_rotate_x(float degrees);
 RWTR_DEF Transform rwtr_init_rotate_y(float degrees);
 RWTR_DEF Transform rwtr_init_rotate_z(float degrees);
+RWTR_DEF Transform rwtr_init_rotate_q(Quaternion rotate_q);
 RWTR_DEF Transform rwtr_init_rotate(Vec3 axis, float degrees);
 RWTR_DEF Transform rwtr_invert(Transform *tr);
 RWTR_DEF Transform rwtr_compose(Transform *tr1, Transform *tr2);
@@ -166,15 +174,22 @@ RWTR_DEF Transform rwtr_init_rotate_z(float degrees) {
   result.t_inv = rwm_m4_transpose(result.t);
 
   return result;
+}
 
+RWTR_DEF Transform rwtr_init_rotate_q(Quaternion rotate_q) {
+  Transform result;
+  result.t = rwm_q_to_m4(rotate_q);
+  result.t_inv = rwm_q_to_m4(rwm_q_inverse(rotate_q));
+  return result;
 }
 
 RWTR_DEF Transform rwtr_init_rotate(Vec3 axis, float degrees) {
+  Transform result;
+#if 0
   Vec3 a = rwm_v3_normalize(axis);
   float sin_t = sinf(rwm_to_radians(degrees));
   float cos_t = cosf(rwm_to_radians(degrees));
 
-  Transform result;
 
   // Compute
   result.t = rwm_m4_identity();
@@ -193,6 +208,11 @@ RWTR_DEF Transform rwtr_init_rotate(Vec3 axis, float degrees) {
   result.t.e[2][0] = a.x * a.z * (1-cos_t) - a.y * sin_t;
   result.t.e[2][1] = a.y * a.z * (1-cos_t) + a.x * sin_t;
   result.t.e[2][2] = SQUARE(a.z) + (1-SQUARE(a.z)) * cos_t;
+#else
+  Quaternion r = rwm_q_init_rotation(axis, rwm_to_radians(degrees));
+  Quaternion r_inv = rwm_q_inverse(r);
+  result.t = rwm_q_to_m4(r);
+#endif
 
   result.t_inv = rwm_m4_transpose(result.t);
 
@@ -235,13 +255,13 @@ RWTR_DEF Transform rwtr_trs(Vec3 translate, Vec3 scale, unsigned int axis, float
   Transform r_tr;
   int num_transforms = 3;
   switch (axis) {
-    case 0:
+    case RWTR_X_AXIS:
       r_tr = rwtr_init_rotate_x(degrees);
       break;
-    case 1:
+    case RWTR_Y_AXIS:
       r_tr = rwtr_init_rotate_y(degrees);
       break;
-    case 2:
+    case RWTR_Z_AXIS:
       r_tr = rwtr_init_rotate_z(degrees);
       break;
     default:

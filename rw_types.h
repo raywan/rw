@@ -95,6 +95,15 @@ typedef Vec3 Point3;
 typedef Vec4 Point4;
 typedef Vec3 Normal3;
 
+typedef union Quaternion {
+  struct { float x, y, z, w; };
+  struct { float b, c, d, a; };
+  float e[4];
+#if defined(RW_USE_INTRINSICS)
+  __m128 m;
+#endif
+} Quaternion;
+
 typedef union Mat3 {
   // NOTE(ray): row major
   struct {
@@ -117,12 +126,6 @@ typedef union Mat4 {
   __m128 row[4];
 #endif
 } Mat4;
-
-typedef union Quaternion {
-  // xi + yj + zk + w
-  struct { float x, y, z, w; };
-  float e[4];
-} Quaternion;
 
 typedef struct Transform {
   Mat4 t;

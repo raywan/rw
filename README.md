@@ -2,9 +2,6 @@
 
 A collection of code/utilities/libraries that I have written from scratch, supporting Windows (MSCV), Mac and Linux (gcc or clang).
 
-Why? I feel that it is important for the growth of a person doing game engine/graphics programming to have a firm grasp
-of these concepts and be able to implement things from scratch.
-
 This repo contains code that I have already found or will find useful for my game development and graphics projects.
 Examples of projects being my Monte Carlo path tracer, OpenGL renderer and SDL2/OpenGL game engine.
 I found myself writing common code across all these projects so I decided to put it all in a single repo that
@@ -28,7 +25,7 @@ I have designed and coded my libraries to suit my needs and my tastes.
 | File           | Version | Description                                                        |
 |----------------|---------|--------------------------------------------------------------------|
 | rw_types.h     | 0.2.0   | Defines or redefines common types                                  |
-| rw_math.h      | 0.2.0   | Math library for games/graphics                                    |
+| rw_math.h      | 0.3.0   | Math library for games/graphics                                    |
 | rw_transform.h | 0.2.0   | Matrix transformation data structure and functions (pbrt inspired) |
 | rw_time.h      | 0.2.0   | High resolution timer (nanoseconds) and other related utilities    |
 | rw_memory.h    | 0.2.0   | Custom memory allocation -- aligned_alloc, arena, etc.             |
